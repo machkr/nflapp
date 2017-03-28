@@ -1,6 +1,6 @@
 # nflapp
 ### A MySQL-backed Python web application
-Necessary packages:
+Required packages:
 ```
 flask
 flask-MySQL
