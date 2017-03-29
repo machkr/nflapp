@@ -17,14 +17,9 @@ The application will detect any changes made in `app.py` and automatically reloa
 
 ### TO-DO
 #### BACKEND
-- Connect to MySQL database
-- Sign Up Function
-- Sign In Function
-- Store data in database
 - Querying the database
 
 #### FRONT END
 - Query Page
-- Tables Page
-- Sign Up Page
-- Sign In Page
+- View Tables Page
+- Page for each table [?]
