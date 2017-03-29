@@ -1,9 +1,12 @@
 from flask import Flask, render_template, json, request, redirect, session
 from flaskext.mysql import MySQL
 from bcrypt import hashpw, checkpw, gensalt
+from binascii import hexlify
+from os import urandom
 
-mysql = MySQL()
-app = Flask(__name__)
+mysql = MySQL() # Initialize database
+app = Flask(__name__) # Shorten application object
+app.secret_key = hexlify(urandom(32)) # Generate session key
 
 # MySQL Configuration
 app.config['MYSQL_DATABASE_USER'] = 'admin'
@@ -15,11 +18,15 @@ mysql.init_app(app)
 # HTML: Home Page
 @app.route('/')
 def main():
+
+	# Render home page
 	return render_template('index.html')
 
 # HTML: Register Page
 @app.route('/register')
 def render_register():
+
+	# Render user registration page
 	return render_template('register.html')
 
 # BACKEND: Register Method
@@ -62,12 +69,17 @@ def register():
 
 	except Exception as exception:
 
-		# Render an error page
-		return render_template('error.html', error = str(exception))
+		# Store error message in session cookie
+		session['error'] = str(exception)
+
+		# Redirect to error page
+		return redirect('/error')
 
 # HTML: Log In Page
 @app.route('/login')
 def render_login():
+
+	# Render the login page
 	return render_template('login.html')
 
 # BACKEND: Log In Method
@@ -101,6 +113,9 @@ def login():
 			# Check password against password hash
 			if checkpw(password.encode('utf-8'), data[0]):
 
+				# Set current session user
+				session['user'] = username
+
 				# Redirect user to homepage
 				return redirect('/home')
 
@@ -120,13 +135,46 @@ def login():
 
 	except Exception as exception:
 
-		# Render an error page
-		return render_template('error.html', error = str(exception))
+		# Store error message in session cookie
+		session['error'] = str(exception)
 
+		# Redirect to error page
+		return redirect('/error')
+
+# HTML: User Home Page
 @app.route('/home')
-def home():
-	return render_template('home.html')
+def render_home():
+
+	# If there is a username stored in the session coookie
+	if session.get('user'): # User logged in
+
+		# Render the user home page
+		return render_template('home.html')
+
+	else: # User not logged in
+
+		# Store error message in session cookie
+		session['error'] = 'Unauthorized Access'
+
+		# Redirect to error page
+		return redirect('/error')
+
+# BACKEND: Error Page
+@app.route('/error')
+def render_error():
+
+	# Retrieve error messages stored in session cookie
+	message = session['error']
+
+	# Render an error page with the error message
+	return render_template('error.html', error = message)
+
+# BACKEND: Log Out Method
+@app.route('/logout')
+def logout():
+	session.pop('user', None)
+	return redirect('/')
 
 if __name__ == "__main__":
-	app.run(debug=True, use_reloader=True)
-	
+	app.run(debug = True, use_reloader = True)
+
