@@ -17,9 +17,18 @@ The application will detect any changes made in `app.py` and automatically reloa
 
 ### TO-DO
 #### BACKEND
-- Querying the database
+- database queries
 
 #### FRONT END
-- Query Page
-- View Tables Page
-- Page for each table [?]
+- page for running queries
+  - general (omni-table) query page
+  - player query page
+  - coach query page
+  - game query page
+  - etc.
+- page for viewing tables
+  - single page
+  - select table
+  - displays formatted table
+  - sorting?
+  - filtering?
