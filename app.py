@@ -1,4 +1,4 @@
-from flask import Flask, render_template, json, request
+from flask import Flask, render_template, json, request, redirect, session
 from flaskext.mysql import MySQL
 from bcrypt import hashpw, checkpw, gensalt
 
@@ -23,55 +23,109 @@ def showsignup():
 	return render_template('signup.html')
 
 # BACKEND: Sign Up Method
-@app.route('/signup', methods=['POST'])
+@app.route('/signup', methods = ['POST'])
 def signup():
 	try:
 		# Read posted values from user interface
 		username = request.form['inputUsername']
 		password = request.form['inputPassword']
 
-		# Validation
-		if username and password:
+		# Connect to the database
+		database = mysql.connect()
+		cursor = database.cursor()
 
-			# Connect to the database
-			database = mysql.connect()
-			cursor = database.cursor()
+		# Generate password hash
+		hash = hashpw(password.encode('utf-8'), gensalt())
 
-			# Generate password hash
-			hash = hashpw(password.encode('utf-8'), gensalt())
+		# Create user using stored procedure
+		cursor.callproc('create_user', (username, hash))
 
-			# Create user using stored procedure
-			cursor.callproc('create_user', (username, hash))
+		# Retrieve data from procedure
+		data = cursor.fetchone()
+
+		if data[0] == 'TRUE': # Success
+			
+			# Commit changes to database
+			database.commit()
+
+			# Print success message to console
+			return render_template('home.html')
+
+		else: # Error
+
+			# Render signup page again, with error
+			return render_template('signup.html', error = "Username already exists.")
+
+		# Disconnect from database
+		cursor.close
+		database.close
+
+	except Exception as exception:
+
+		# Render an error page
+		return render_template('error.html', error = str(exception))
+
+# HTML: Sign In
+@app.route('/showsignin')
+def showsignin():
+	return render_template('signin.html')
+
+# BACKEND: Sign In Method
+@app.route('/signin', methods = ['POST'])
+def signin():
+	try:
+		# Read posted values from user interface
+		username = request.form['inputUsername']
+		password = request.form['inputPassword']
+
+		print("Username: ", username)
+
+		# Connect to the database
+		database = mysql.connect()
+		cursor = database.cursor()
+
+		# Check if user exists
+		cursor.callproc('check_user', (username,))
+
+		# Retrieve data from procedure
+		data = cursor.fetchone()
+
+		if data[0] == 'TRUE': # User exists
+			
+			# Get corresponding password hash
+			cursor.callproc('get_password', (username,))
 
 			# Retrieve data from procedure
 			data = cursor.fetchone()
 
-			if data[0] == 'TRUE': # Success
-				
-				# Commit changes to database
-				database.commit()
+			# Check password against password hash
+			if checkpw(password.encode('utf-8'), data[0]):
 
-				# Print success message to console
-				return json.dumps({'message':'User created successfully.'})
+				# Redirect user to homepage
+				return redirect('/home')
 
-			else: # Error
+			else: # Password hashes don't match
 
-				# Print error message to console
-				return json.dumps({'error':'Username already exists.'})
+				# Render an error page
+				return render_template('signin.html', error = 'Incorrect password.')
 
-			# Disconnect from database
-			cursor.close
-			database.close
+		elif data[0] == 'FALSE': # User does not exist
 
-		else: # One or both of the fields were empty
+			# Render an error page
+			return render_template('signin.html', error = 'User does not exist.')
 
-			# Print error message to console
-			return json.dumps({'error':'<span>Error: enter a username and password.</span>'})
+		# Disconnect from database
+		cursor.close
+		database.close
 
 	except Exception as exception:
 
-		# Print error message to console
-		return json.dumps({'error': str(exception)})
+		# Render an error page
+		return render_template('error.html', error = str(exception))
+
+@app.route('/home')
+def home():
+	return render_template('home.html')
 
 if __name__ == "__main__":
 	app.run(debug=True, use_reloader=True)
