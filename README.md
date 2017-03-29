@@ -6,8 +6,10 @@ flask
 flask-MySQL
 bcrypt
 ```
+
 Execute `python app.py` to run the application back-end.
 Once running, view the application at `http://localhost:5000/`.
+
 ---
 
 The application will detect any changes made in `app.py` and automatically reload. When modifying front-end files, the web page may simply be refreshed to reflect those changes.
