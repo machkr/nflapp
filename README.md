@@ -4,6 +4,7 @@ Required packages:
 ```
 flask
 flask-MySQL
+bcrypt
 ```
 To run the application, execute:
 ```
@@ -13,6 +14,10 @@ Once running, view the application at:
 ```
 http://localhost:5000/
 ```
+---
+The application will detect any changes made to `app.py` and automatically reload.
+
+and
 ### TO-DO
 #### BACKEND
 - Connect to MySQL database
