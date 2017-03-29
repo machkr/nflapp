@@ -159,7 +159,7 @@ def render_home():
 		# Redirect to error page
 		return redirect('/error')
 
-# BACKEND: Error Page
+# HTML: Error Page
 @app.route('/error')
 def render_error():
 
@@ -172,9 +172,12 @@ def render_error():
 # BACKEND: Log Out Method
 @app.route('/logout')
 def logout():
+
+	# Remove stored username from cookie
 	session.pop('user', None)
+
+	# Redirect to home page
 	return redirect('/')
 
 if __name__ == "__main__":
 	app.run(debug = True, use_reloader = True)
-
