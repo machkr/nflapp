@@ -7,6 +7,8 @@ flask-MySQL
 bcrypt
 ```
 
+---
+
 Execute `python app.py` to run the application back-end. Once running, view the application at `http://localhost:5000/`.
 
 ---
