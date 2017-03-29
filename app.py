@@ -12,7 +12,7 @@ def showsignup():
 	return render_template('signup.html')
 
 # BACKEND: Sign Up Method
-@app.route('/signup')
+@app.route('/signup', methods=['POST'])
 def signup():
 	# Read posted values from user interface
 	username = request.form['inputUsername']
