@@ -9,7 +9,7 @@
 
 		<link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
 		<link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
-		<link href="../static/signup.css" rel="stylesheet">
+		<link href="../static/stylesheet.css" rel="stylesheet">
 
 		<script src="../static/js/jquery-3.2.0.js"></script>
 		<script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
@@ -22,8 +22,8 @@
 				<nav>
 					<ul class="nav nav-pills pull-right">
 						<li role="presentation" ><a href="/">Home</a></li>
-						<li role="presentation" class="active"><a href="#">Sign In</a></li>
-						<li role="presentation"><a href="/showsignup">Sign Up</a></li>
+						<li role="presentation"><a href="/login">Log In</a></li>
+						<li role="presentation" class="active"><a href="#">Register</a></li>
 					</ul>
 				</nav>
 				<h3 class="text-muted">An NFL Database</h3>
@@ -31,7 +31,8 @@
 	 
 			<div class="jumbotron">
 				<h1>NFLDB</h1>
-				<form class="form-signin" action="/signin" method="post" data-toggle="validator" role="form">
+				<form class="form-signin" action="/register" method="post" data-toggle="validator" role="form">
+					
 					<div class="form-group">
 						<label for="inputUsername" class="sr-only">Username</label>
 						<input type="text" pattern="^[_A-z0-9]+$" maxlength="45" name="inputUsername" id="inputUsername" class="form-control" placeholder="Username" required autofocus>
@@ -41,11 +42,16 @@
 						<label for="inputPassword" class="sr-only">Password</label>
 						<div class="form-group">
 							<input type="password" data-minlength="8" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required>
+							<div class="help-block">Minimum of 8 characters.</div>
+						</div>
+						<div class="form-group">
+							<input type="password" name="inputPasswordConfirm" id="inputPasswordConfirm" class="form-control" data-match="#inputPassword" data-match-error="Passwords do not match." placeholder="Confirm" required>
+							<div class="help-block with-errors"></div>
 						</div>
 					</div>
-
+					
 					<div class="form-group">
-						<button id="signinbutton" class="btn btn-lg btn-primary btn-block" type="submit">Sign In</button>
+						<button id="registerbutton" class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
 						<div class="help-block">{{error}}</div>
 					</div>
 				</form>

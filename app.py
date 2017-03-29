@@ -17,14 +17,14 @@ mysql.init_app(app)
 def main():
 	return render_template('index.html')
 
-# HTML: Sign Up
-@app.route('/showsignup')
-def showsignup():
-	return render_template('signup.html')
+# HTML: Register Page
+@app.route('/register')
+def render_register():
+	return render_template('register.html')
 
-# BACKEND: Sign Up Method
-@app.route('/signup', methods = ['POST'])
-def signup():
+# BACKEND: Register Method
+@app.route('/register', methods = ['POST'])
+def register():
 	try:
 		# Read posted values from user interface
 		username = request.form['inputUsername']
@@ -53,8 +53,8 @@ def signup():
 
 		else: # Error
 
-			# Render signup page again, with error
-			return render_template('signup.html', error = "Username already exists.")
+			# Render register page again, with error
+			return render_template('register.html', error = "Username already exists.")
 
 		# Disconnect from database
 		cursor.close
@@ -65,14 +65,14 @@ def signup():
 		# Render an error page
 		return render_template('error.html', error = str(exception))
 
-# HTML: Sign In
-@app.route('/showsignin')
-def showsignin():
-	return render_template('signin.html')
+# HTML: Log In Page
+@app.route('/login')
+def render_login():
+	return render_template('login.html')
 
-# BACKEND: Sign In Method
-@app.route('/signin', methods = ['POST'])
-def signin():
+# BACKEND: Log In Method
+@app.route('/login', methods = ['POST'])
+def login():
 	try:
 		# Read posted values from user interface
 		username = request.form['inputUsername']
@@ -106,13 +106,13 @@ def signin():
 
 			else: # Password hashes don't match
 
-				# Render an error page
-				return render_template('signin.html', error = 'Incorrect password.')
+				# Render log in page again, display error
+				return render_template('login.html', error = 'Incorrect password.')
 
 		elif data[0] == 'FALSE': # User does not exist
 
-			# Render an error page
-			return render_template('signin.html', error = 'User does not exist.')
+			# Render log in page again, display error
+			return render_template('login.html', error = 'User does not exist.')
 
 		# Disconnect from database
 		cursor.close
