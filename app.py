@@ -7,9 +7,9 @@ app = Flask(__name__)
 
 # MySQL Configuration
 app.config['MYSQL_DATABASE_USER'] = 'admin'
-app.config['MYSQL_DATABASE_PASSWORD'] = 
+app.config['MYSQL_DATABASE_PASSWORD'] = 'zI0R378CjfTF0sljMvOgzrFXJwSlhPbH1Fe'
 app.config['MYSQL_DATABASE_DB'] = 'nfldb'
-app.config['MYSQL_DATABASE_HOST'] = 
+app.config['MYSQL_DATABASE_HOST'] = 'nfldb.cvfrpuoosleq.us-east-1.rds.amazonaws.com:3306'
 mysql.init_app(app)
 
 # HTML: Home Page
