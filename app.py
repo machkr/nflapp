@@ -90,8 +90,6 @@ def login():
 		username = request.form['inputUsername']
 		password = request.form['inputPassword']
 
-		print("Username: ", username)
-
 		# Connect to the database
 		database = mysql.connect()
 		cursor = database.cursor()
