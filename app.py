@@ -177,5 +177,12 @@ def logout():
 	# Redirect to home page
 	return redirect('/')
 
+# HTML: Coaches Page
+@app.route('/database/coaches')
+def render_coaches():
+
+	# Render the coaches page
+	return render_template('coaches.html')
+
 if __name__ == "__main__":
 	app.run(debug = True, use_reloader = True)
