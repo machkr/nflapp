@@ -184,5 +184,40 @@ def render_coaches():
 	# Render the coaches page
 	return render_template('coaches.html')
 
+# HTML: Players Page
+@app.route('/database/players')
+def render_players():
+
+	# Render the players page
+	return render_template('players.html')
+	
+# HTML: Games Page
+@app.route('/database/games')
+def render_games():
+
+	# Render the games page
+	return render_template('games.html')
+
+# HTML: Super Bowls Page
+@app.route('/database/supbowls')
+def render_supbowls():
+
+	# Render the Super Bowls page
+	return render_template('supbowls.html')
+
+# HTML: Franchises Page
+@app.route('/database/franchises')
+def render_franchises():
+
+	# Render the franchises page
+	return render_template('franchises.html')
+
+# HTML: Teams Page
+@app.route('/database/teams')
+def render_teams():
+
+	# Render the teams page
+	return render_template('teams.html')
+
 if __name__ == "__main__":
 	app.run(debug = True, use_reloader = True)
