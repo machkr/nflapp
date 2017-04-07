@@ -14,6 +14,19 @@
 		<script src="../static/js/jquery-3.2.0.js"></script>
 		<script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+		
+		<style>
+		table, th, td {
+			border: 1px solid black;
+			border-collapse: collapse;
+		}
+		th, td {
+			padding: 5px;
+		}
+		th {
+			text-align: left;
+		}
+		</style>
 	</head>
 
 	<body>
@@ -40,37 +53,34 @@
 				</nav>
 				<h3 class="text-muted">NFLDB: An NFL Database</h3>
 			</div>
-
-			<table class="table table-hover table-responsive">
-				<thead class="thead-default">
-					<tr>
-						<th>#</th>
-						<th>First Name</th>
-						<th>Last Name</th>
-						<th>Username</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<th scope="row">1</th>
-						<td>Mark</td>
-						<td>Otto</td>
-						<td>@mdo</td>
-					</tr>
-					<tr>
-						<th scope="row">2</th>
-						<td>Jacob</td>
-						<td>Thornton</td>
-						<td>@fat</td>
-					</tr>
-					<tr>
-						<th scope="row">3</th>
-						<td>Larry</td>
-						<td>the Bird</td>
-						<td>@twitter</td>
-					</tr>
-				</tbody>
+			
+			<table style = "width:100%">
+			  <tr>
+				<th>Coach_ID</th>
+				<th>First Name</th>
+				<th>Lame Name</th>
+				<th>Year</th>
+				<th>Age</th>
+				<th>Team_ID</th>
+				<th>Season Games Played</th>
+				<th>Season Wins</th>
+				<th>Season losses</th>
+				<th>Season Ties</th>
+				<th>Win Loss Percentage</th>
+				<th>Playoff Games Played</th>
+				<th>Playoff Wins</th>
+				<th>Playoff Losses</th>
+				<th>Playoff Win Loss Percentage</th>
+			  </tr>
+			{% for row in data %}
+				<tr>
+				{% for d in row %}
+					<td>{{ d }}</td>
+				{% endfor %}
+				</tr>
+			{% endfor %}
 			</table>
+
 			
 			<footer class="footer">
 				<p>&copy; 2017</p>
