@@ -182,7 +182,13 @@ def logout():
 def render_coaches():
 
 	# Render the coaches page
-	return render_template('coaches.html')
+
+	database = mysql.connect()
+	cursor = database.cursor()
+	cursor.execute("SELECT * FROM coaches LIMIT 100")
+	data = cursor.fetchall()
+	return render_template('coaches.html', data = data)
+                
 
 # HTML: Players Page
 @app.route('/database/players')

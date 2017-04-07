@@ -14,6 +14,19 @@
 		<script src="../static/js/jquery-3.2.0.js"></script>
 		<script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+		
+		<style>
+		table, th, td {
+			border: 1px solid black;
+			border-collapse: collapse;
+		}
+		th, td {
+			padding: 5px;
+		}
+		th {
+			text-align: left;
+		}
+		</style>
 	</head>
 
 	<body>
@@ -40,6 +53,7 @@
 				</nav>
 				<h3 class="text-muted">NFLDB: An NFL Database</h3>
 			</div>
+<<<<<<< HEAD
 
 			<div class="table">
 				<table class="table table-hover table-responsive">
@@ -73,6 +87,105 @@
 					</tbody>
 				</table>
 			</div>	
+=======
+			
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="input-group" id="adv-search">
+							<input type="text" class="form-control" placeholder="Search Coaches" />
+							<div class="input-group-btn">
+								<div class="btn-group" role="group">
+									<div class="dropdown dropdown-lg">
+										<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
+										<div class="dropdown-menu dropdown-menu-right" role="menu">
+											<form class="form-horizontal" role="form">
+											  <div class="form-group">
+												<label for="filter">Sort By</label>
+												<select class="form-control">
+													<option value="0" selected>Coach Name</option>
+													<option value="1">Coach ID</option>
+													<option value="2">Season Win/Lose Percentage</option>
+													<option value="3">Play Off Win/Lose Percentage</option>
+												</select>
+											  </div>
+											  <div class="form-group">
+												<label for="filter">Filter by Alphabet</label>
+												<select class="form-control">
+													<option value="0" selected></option>
+													<option value="a">A</option>
+													<option value="b">B</option>
+													<option value="c">C</option>
+													<option value="d">D</option>
+													<option value="e">E</option>
+													<option value="f">F</option>
+													<option value="g">G</option>
+													<option value="h">H</option>
+													<option value="i">I</option>
+													<option value="j">J</option>
+													<option value="k">K</option>
+													<option value="l">L</option>
+													<option value="m">M</option>
+													<option value="n">N</option>
+													<option value="o">O</option>
+													<option value="p">P</option>
+													<option value="q">Q</option>
+													<option value="r">R</option>
+													<option value="s">S</option>
+													<option value="t">T</option>
+													<option value="u">U</option>
+													<option value="v">V</option>
+													<option value="w">W</option>
+													<option value="x">X</option>
+													<option value="y">Y</option>
+													<option value="z">Z</option>
+												</select>
+											  </div>
+											  <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+											</form>
+										</div>
+									</div>
+									<button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+								</div>
+							</div>
+						</div>
+					  </div>
+					</div>
+				</div>
+			</div>
+	
+			<br><br>
+			
+			
+			
+			<table style = "width:90%" align="center">
+			  <tr>
+				<th>Coach_ID</th>
+				<th>First Name</th>
+				<th>Lame Name</th>
+				<th>Year</th>
+				<th>Age</th>
+				<th>Team_ID</th>
+				<th>Season Games Played</th>
+				<th>Season Wins</th>
+				<th>Season losses</th>
+				<th>Season Ties</th>
+				<th>Season Win Loss Percentage</th>
+				<th>Playoff Games Played</th>
+				<th>Playoff Wins</th>
+				<th>Playoff Losses</th>
+				<th>Playoff Win Loss Percentage</th>
+			  </tr>
+			{% for row in data %}
+				<tr>
+				{% for d in row %}
+					<td>{{ d }}</td>
+				{% endfor %}
+				</tr>
+			{% endfor %}
+			</table>
+
+>>>>>>> origin/master
 			
 			<div class="footer">
 				<footer class="footer">
