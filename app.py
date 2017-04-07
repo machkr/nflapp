@@ -199,11 +199,11 @@ def render_games():
 	return render_template('games.html')
 
 # HTML: Super Bowls Page
-@app.route('/database/supbowls')
-def render_supbowls():
+@app.route('/database/superbowls')
+def render_superbowls():
 
 	# Render the Super Bowls page
-	return render_template('supbowls.html')
+	return render_template('superbowls.html')
 
 # HTML: Franchises Page
 @app.route('/database/franchises')
