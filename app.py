@@ -248,15 +248,32 @@ def render_coaches():
 
 	if session.get('admin'): # User is administrator
 
-		# Render the admin home page
+		# Render the coaches page as admin
 		return render_template('coaches.html', 
 			home = '/admin', headers = headers, data = data)
 
 	else: # User is not administrator
 
-		# Render the user home page
+		# Render the coaches page as user
 		return render_template('coaches.html', 
 			home = '/home', headers = headers, data = data)
+
+# BACKEND: Query Coaches Method
+@app.route('/database/coaches', methods = ['POST'])
+def query_coaches():
+	try:
+		# Read posted values from user interface
+		if request.form['limit']: # Limit checkbox checked
+			entries = request.form['entries']
+
+
+	except Exception as exception:
+
+		# Store error message in session cookie
+		session['error'] = str(exception)
+
+		# Redirect to error page
+		return redirect('/error')
 
 # HTML: Players Page
 @app.route('/database/players')
@@ -280,13 +297,13 @@ def render_games():
 
 	if session.get('admin'): # User is administrator
 
-		# Render the admin home page
+		# Render the games page as admin
 		return render_template('games.html', 
 			home = '/admin')
 
 	else: # User is not administrator
 
-		# Render the user home page
+		# Render the games page as user
 		return render_template('games.html', 
 			home = '/home')
 
@@ -296,13 +313,13 @@ def render_superbowls():
 
 	if session.get('admin'): # User is administrator
 
-		# Render the admin home page
+		# Render the super bowls page as admin
 		return render_template('superbowls.html', 
 			home = '/admin')
 
 	else: # User is not administrator
 
-		# Render the user home page
+		# Render the super bowls page as user
 		return render_template('superbowls.html', 
 			home = '/home')
 
@@ -312,13 +329,13 @@ def render_franchises():
 
 	if session.get('admin'): # User is administrator
 
-		# Render the admin home page
+		# Render the franchises page as admin
 		return render_template('franchises.html', 
 			home = '/admin')
 
 	else: # User is not administrator
 
-		# Render the user home page
+		# Render the franchises page as user
 		return render_template('franchises.html', 
 			home = '/home')
 
@@ -328,13 +345,13 @@ def render_teams():
 
 	if session.get('admin'): # User is administrator
 
-		# Render the admin home page
+		# Render the teams page as admin
 		return render_template('teams.html', 
 			home = '/admin')
 
 	else: # User is not administrator
 
-		# Render the user home page
+		# Render the teams page as user
 		return render_template('teams.html', 
 			home = '/home')
 
