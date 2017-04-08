@@ -60,6 +60,9 @@ def register():
 
 			if data[0] == 'TRUE': # Successful login
 
+				# Set current session user
+				session['user'] = username
+
 				# Commit changes to database
 				database.commit()
 
