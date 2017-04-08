@@ -10,12 +10,14 @@
 		<link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
 		<link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
 		<link href="../static/stylesheet.css" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
 
 		<script src="../static/js/jquery-3.2.0.js"></script>
 		<script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
 	</head>
-
+	
 	<body>
 		<div class="container-fluid">
 			<div class="header">
@@ -41,71 +43,59 @@
 				<h3 class="text-muted">NFLDB: An NFL Database</h3>
 			</div>	
 			
-			<div class="container">
+			<div class="container-fluid">
 				<div class="row">
-					<div class="col-md-12">
-						<div class="input-group" id="adv-search">
-							<input type="text" class="form-control" placeholder="Search Coaches" />
-							<div class="input-group-btn">
-								<div class="btn-group" role="group">
-									<div class="dropdown dropdown-lg">
-										<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
-										<div class="dropdown-menu dropdown-menu-right" role="menu">
-											<form class="form-horizontal" role="form">
-											  <div class="form-group">
-												<label for="filter">Sort By</label>
-												<select class="form-control" name="sortby">
-													{% for header in headers %}
-														<option value="{{ header[0] }}">{{ header[0] }}</option>
-													{% endfor %}
-												</select>
-											  </div>
-											  <div class="form-group">
-												<label for="filter">Filter by Alphabet</label>
-												<select class="form-control">
-													<option value="0" selected></option>
-													<option value="a">A</option>
-													<option value="b">B</option>
-													<option value="c">C</option>
-													<option value="d">D</option>
-													<option value="e">E</option>
-													<option value="f">F</option>
-													<option value="g">G</option>
-													<option value="h">H</option>
-													<option value="i">I</option>
-													<option value="j">J</option>
-													<option value="k">K</option>
-													<option value="l">L</option>
-													<option value="m">M</option>
-													<option value="n">N</option>
-													<option value="o">O</option>
-													<option value="p">P</option>
-													<option value="q">Q</option>
-													<option value="r">R</option>
-													<option value="s">S</option>
-													<option value="t">T</option>
-													<option value="u">U</option>
-													<option value="v">V</option>
-													<option value="w">W</option>
-													<option value="x">X</option>
-													<option value="y">Y</option>
-													<option value="z">Z</option>
-												</select>
-											  </div>
-											  <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-											</form>
-										</div>
-									</div>
-									<button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-								</div>
-							</div>
+					<div class="form-group">
+						<div class="input-group">
+							<span class="input-group-addon">Attribute</span>
+							<select class="selectpicker show-tick" data-width="auto" data-live-search="true" title="None" name="query_attribute">
+								<option selected disabled hidden style='display: none' value=''></option>
+								{% for header in headers %}
+									<option value="{{ header[0] }}">{{ header[0] }}</option>
+								{% endfor %}
+							</select>
+
+							<span class="input-group-addon">Operator</span>
+							<select class="selectpicker show-tick" data-width="auto" title="None" name="query_operator">
+								<option selected disabled hidden style='display: none' value=''></option>
+								<option value="<"><</option>
+								<option value="<="><=</option>
+								<option value="=">=</option>
+								<option value="!=">!=</option>
+								<option value=">=">>=</option>
+								<option value=">">></option>
+							</select>
+
+							<span class="input-group-addon">Input</span>
+							<input type="text" class="form-control" placeholder="Search Query"/>
+
+							<span class="input-group-addon">Sort By</span>
+							<select class="selectpicker show-tick" data-width="auto" data-live-search="true" title="None" name="sort_by_attribute">
+								<option selected disabled hidden style='display: none' value=''></option>
+								{% for header in headers %}
+									<option value="{{ header[0] }}">{{ header[0] }}</option>
+								{% endfor %}
+							</select>
+
+							<span class="input-group-addon">Limit</span>
+							<select class="selectpicker show-tick" data-width="auto" title="All" name="limit_option">
+								<option selected disabled hidden style='display: none' value=''></option>
+								<option value="10">10</option>
+								<option value="25">25</option>
+								<option value="50">50</option>
+								<option value="100">100</option>
+							</select>
+
+							<span class="input-group-btn">
+								<button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-search" type="submit"></span></button>
+							</span>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<br><br>
-		
+			</br>
+
 			<div class="table">
 				<table class="table table-hover table-responsive" style = "width:95%" align="center">
 					<thead class="thead-default">
@@ -134,6 +124,6 @@
 					<p>&copy; 2017</p>
 				</footer>
 			</div>
-		</div>		
+		</div>
 	</body>
 </html>
