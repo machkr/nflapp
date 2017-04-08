@@ -55,29 +55,23 @@ def register():
 			# Log in user
 			cursor.callproc('login', (username,))
 
-			# Retrieve data from procedure
-			data = cursor.fetchone()
+			# Commit changes to database
+			database.commit()
 
-			if data[0] == 'TRUE': # Successful login
+			# Set current session user
+			session['user'] = username
 
-				# Set current session user
-				session['user'] = username
+			# Set current session admin status
+			session['admin'] = False
 
-				# Commit changes to database
-				database.commit()
-
-				# Redirect user to home page
-				return redirect('/home')
-
-			else: # Error in logging in
-
-				# Render login page with error
-				return render_template('login.html', error = 'Unable to log in.')
+			# Redirect user to home page
+			return redirect('/home')
 
 		else: # Error
 
 			# Render register page again, with error
-			return render_template('register.html', error = 'Username already exists.')
+			return render_template('register.html', 
+				error = 'Username already exists.')
 
 		# Disconnect from database
 		cursor.close
@@ -133,28 +127,44 @@ def login():
 				# Retrieve data from procedure
 				data = cursor.fetchone()
 
-				if data[0] == 'TRUE': # Successful login
+				# Set current session user
+				session['user'] = username
 
-					# Set current session user
-					session['user'] = username
+				print("Login (Admin):", data[0])
+
+				if data[0] == 1: # User is administrator
+
+					# Set current session admin status
+					session['admin'] = True
+
+					# Redirect user to homepage
+					return redirect('/admin')
+
+				elif data[0] == 0: # User is not an administrator
+
+					# Set current session admin status
+					session['admin'] = False
 
 					# Redirect user to homepage
 					return redirect('/home')
 
-				else: # Error in logging in
+				else: # User is neither admin nor regular
 
 					# Render log in page again, display error
-					return render_template('login.html', error = 'Unable to log in.')
+					return render_template('login.html', 
+						error = 'Something went wrong.')
 
 			else: # Password hashes don't match
 
 				# Render log in page again, display error
-				return render_template('login.html', error = 'Incorrect password.')
+				return render_template('login.html', 
+					error = 'Incorrect password.')
 
 		elif data[0] == 'FALSE': # User does not exist
 
 			# Render log in page again, display error
-			return render_template('login.html', error = 'User does not exist.')
+			return render_template('login.html', 
+				error = 'User does not exist.')
 
 		# Disconnect from database
 		cursor.close
@@ -175,8 +185,17 @@ def render_home():
 	# If there is a username stored in the session coookie
 	if session.get('user'): # User logged in
 
-		# Render the user home page
-		return render_template('home.html')
+		if session.get('admin'): # User is administrator
+
+			# Render the admin home page
+			return render_template('home.html', 
+				home = '/admin')
+
+		else: # User is not administrator
+
+			# Render the user home page
+			return render_template('home.html', 
+				home = '/home')
 
 	else: # User not logged in
 
@@ -194,7 +213,8 @@ def render_error():
 	message = session['error']
 
 	# Render an error page with the error message
-	return render_template('error.html', error = message)
+	return render_template('error.html', 
+		error = message)
 
 # BACKEND: Log Out Method
 @app.route('/logout')
@@ -202,6 +222,7 @@ def logout():
 
 	# Remove stored username from cookie
 	session.pop('user', None)
+	session.pop('admin', False)
 
 	# Redirect to home page
 	return redirect('/')
@@ -225,44 +246,115 @@ def render_coaches():
 	# Retrieve data from procedure
 	data = cursor.fetchall()
 
-	# Render the coaches page with the query result
-	return render_template('coaches.html', headers = headers, data = data)
-                
+	if session.get('admin'): # User is administrator
+
+		# Render the admin home page
+		return render_template('coaches.html', 
+			home = '/admin', headers = headers, data = data)
+
+	else: # User is not administrator
+
+		# Render the user home page
+		return render_template('coaches.html', 
+			home = '/home', headers = headers, data = data)
 
 # HTML: Players Page
 @app.route('/database/players')
 def render_players():
 
-	# Render the players page
-	return render_template('players.html')
+	if session.get('admin'): # User is administrator
+
+		# Render the admin home page
+		return render_template('players.html', 
+			home = '/admin')
+
+	else: # User is not administrator
+
+		# Render the user home page
+		return render_template('players.html', 
+			home = '/home')
 	
 # HTML: Games Page
 @app.route('/database/games')
 def render_games():
 
-	# Render the games page
-	return render_template('games.html')
+	if session.get('admin'): # User is administrator
+
+		# Render the admin home page
+		return render_template('games.html', 
+			home = '/admin')
+
+	else: # User is not administrator
+
+		# Render the user home page
+		return render_template('games.html', 
+			home = '/home')
 
 # HTML: Super Bowls Page
 @app.route('/database/superbowls')
 def render_superbowls():
 
-	# Render the Super Bowls page
-	return render_template('superbowls.html')
+	if session.get('admin'): # User is administrator
+
+		# Render the admin home page
+		return render_template('superbowls.html', 
+			home = '/admin')
+
+	else: # User is not administrator
+
+		# Render the user home page
+		return render_template('superbowls.html', 
+			home = '/home')
 
 # HTML: Franchises Page
 @app.route('/database/franchises')
 def render_franchises():
 
-	# Render the franchises page
-	return render_template('franchises.html')
+	if session.get('admin'): # User is administrator
+
+		# Render the admin home page
+		return render_template('franchises.html', 
+			home = '/admin')
+
+	else: # User is not administrator
+
+		# Render the user home page
+		return render_template('franchises.html', 
+			home = '/home')
 
 # HTML: Teams Page
 @app.route('/database/teams')
 def render_teams():
 
-	# Render the teams page
-	return render_template('teams.html')
+	if session.get('admin'): # User is administrator
+
+		# Render the admin home page
+		return render_template('teams.html', 
+			home = '/admin')
+
+	else: # User is not administrator
+
+		# Render the user home page
+		return render_template('teams.html', 
+			home = '/home')
+
+# HTML: Admin Page
+@app.route('/admin')
+def render_admin():
+
+	# If the user's admin status is 'True'
+	if session.get('admin'): # User is admin
+
+		# Render the admin page
+		return render_template('admin.html')
+
+	else:
+
+		# Store error message in session cookie
+		session['error'] = 'Unauthorized Access'
+
+		# Redirect to error page
+		return redirect('/error')
 
 if __name__ == "__main__":
 	app.run(debug = True, use_reloader = True)
