@@ -51,17 +51,30 @@ def register():
 		data = cursor.fetchone()
 
 		if data[0] == 'TRUE': # Success
-			
-			# Commit changes to database
-			database.commit()
 
-			# Print success message to console
-			return render_template('home.html')
+			# Log in user
+			cursor.callproc('login', (username,))
+
+			# Retrieve data from procedure
+			data = cursor.fetchone()
+
+			if data[0] == 'TRUE': # Successful login
+
+				# Commit changes to database
+				database.commit()
+
+				# Redirect user to home page
+				return redirect('/home')
+
+			else: # Error in logging in
+
+				# Render login page with error
+				return render_template('login.html', error = 'Unable to log in.')
 
 		else: # Error
 
 			# Render register page again, with error
-			return render_template('register.html', error = "Username already exists.")
+			return render_template('register.html', error = 'Username already exists.')
 
 		# Disconnect from database
 		cursor.close
@@ -111,11 +124,24 @@ def login():
 			# Check password against password hash
 			if checkpw(password.encode('utf-8'), data[0]):
 
-				# Set current session user
-				session['user'] = username
+				# Log in user
+				cursor.callproc('login', (username,))
 
-				# Redirect user to homepage
-				return redirect('/home')
+				# Retrieve data from procedure
+				data = cursor.fetchone()
+
+				if data[0] == 'TRUE': # Successful login
+
+					# Set current session user
+					session['user'] = username
+
+					# Redirect user to homepage
+					return redirect('/home')
+
+				else: # Error in logging in
+
+					# Render log in page again, display error
+					return render_template('login.html', error = 'Unable to log in.')
 
 			else: # Password hashes don't match
 
@@ -185,6 +211,11 @@ def render_coaches():
 	database = mysql.connect()
 	cursor = database.cursor()
 
+	# Query the database for headers
+	cursor.callproc('get_headers', ('coaches',))
+
+	headers = cursor.fetchall()
+
 	# Query database -- will be stored procedure eventually
 	cursor.execute("SELECT * FROM coaches LIMIT 100")
 
@@ -192,7 +223,7 @@ def render_coaches():
 	data = cursor.fetchall()
 
 	# Render the coaches page with the query result
-	return render_template('coaches.html', data = data)
+	return render_template('coaches.html', headers = headers, data = data)
                 
 
 # HTML: Players Page

@@ -112,31 +112,19 @@
 					<thead class="thead-default">
 						<tr>
 							<th>#</th>
-							<th>Coach ID</th>
-							<th>First Name</th>
-							<th>Last Name</th>
-							<th>Year</th>
-							<th>Age</th>
-							<th>Team ID</th>
-							<th>Season Games Played</th>
-							<th>Season Wins</th>
-							<th>Season Losses</th>
-							<th>Season Ties</th>
-							<th>Season Win-Loss %</th>
-							<th>Playoff Games Played</th>
-							<th>Playoff Wins</th>
-							<th>Playoff Losses</th>
-							<th>Playoff Win-Loss %</th>
+							{% for header in headers %}
+								<th>{{ header[0] }}</th>
+							{% endfor %}
 						</tr>
 					</thead>
 					<tbody>
 						{% for row in data %}
-						<tr>
-							<th scope="row">{{ data.index(row) + 1 }}</th>
-							{% for d in row %}
-							<td>{{ d }}</td>
-							{% endfor %}
-						</tr>
+							<tr>
+								<th scope="row">{{ data.index(row) + 1 }}</th>
+								{% for d in row %}
+									<td>{{ d }}</td>
+								{% endfor %}
+							</tr>
 						{% endfor %}
 					</tbody>
 				</table>
