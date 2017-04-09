@@ -307,6 +307,22 @@ def query_coaches():
 @app.route('/database/players')
 def render_players():
 
+	# Connect to the database
+	database = mysql.connect()
+	cursor = database.cursor()
+
+	# Query the database for headers
+	cursor.callproc('get_headers', ('players',))
+
+	# Retrieve data from procedure
+	headers = cursor.fetchall()
+
+	# Query database
+	cursor.callproc('preview_table', ('players',))
+
+	# Retrieve data from procedure
+	data = cursor.fetchall()
+
 	if session.get('admin'): # User is administrator
 
 		# Render the admin home page
@@ -318,10 +334,72 @@ def render_players():
 		# Render the user home page
 		return render_template('players.html', 
 			home = '/home')
-	
+
+# BACKEND: Query Players Method
+@app.route('/database/coaches', methods = ['POST'])
+def query_players():
+	try:
+		# Read posted values from user interface
+		attribute = request.form['query_attribute'] # Query attribute
+		operator = request.form['query_operator'] # Query operator
+		input = request.form['query_input'] # Query input	
+		sort_attribute = request.form['sort_attribute'] # Sorting attribute
+		entries = request.form['limit'] # Limit entries value
+		
+		# Connect to the database
+		database = mysql.connect()
+		cursor = database.cursor()
+
+		# Query the database for headers
+		cursor.callproc('get_headers', ('players',))
+
+		# Retrieve data from procedure
+		headers = cursor.fetchall()
+
+		# Query database
+		cursor.callproc('query', 
+			('players', attribute, operator, input, sort_attribute, entries))
+
+		# Retrieve data from procedure
+		data = cursor.fetchall()
+
+		if session.get('admin'): # User is administrator
+
+			# Render the players page as admin
+			return render_template('players.html', 
+				home = '/admin', headers = headers, data = data)
+
+		else: # User is not administrator
+
+			# Render the players page as user
+			return render_template('players.html', 
+				home = '/home', headers = headers, data = data)
+
+	except Exception as exception:
+
+		# Render the players page without data
+		return render_template('players.html', 
+			headers = headers)
+
 # HTML: Games Page
 @app.route('/database/games')
 def render_games():
+
+	# Connect to the database
+	database = mysql.connect()
+	cursor = database.cursor()
+
+	# Query the database for headers
+	cursor.callproc('get_headers', ('games',))
+
+	# Retrieve data from procedure
+	headers = cursor.fetchall()
+
+	# Query database
+	cursor.callproc('preview_table', ('games',))
+
+	# Retrieve data from procedure
+	data = cursor.fetchall()
 
 	if session.get('admin'): # User is administrator
 
@@ -335,9 +413,71 @@ def render_games():
 		return render_template('games.html', 
 			home = '/home')
 
+# BACKEND: Query Games Method
+@app.route('/database/games', methods = ['POST'])
+def query_coaches():
+	try:
+		# Read posted values from user interface
+		attribute = request.form['query_attribute'] # Query attribute
+		operator = request.form['query_operator'] # Query operator
+		input = request.form['query_input'] # Query input	
+		sort_attribute = request.form['sort_attribute'] # Sorting attribute
+		entries = request.form['limit'] # Limit entries value
+		
+		# Connect to the database
+		database = mysql.connect()
+		cursor = database.cursor()
+
+		# Query the database for headers
+		cursor.callproc('get_headers', ('games',))
+
+		# Retrieve data from procedure
+		headers = cursor.fetchall()
+
+		# Query database
+		cursor.callproc('query', 
+			('games', attribute, operator, input, sort_attribute, entries))
+
+		# Retrieve data from procedure
+		data = cursor.fetchall()
+
+		if session.get('admin'): # User is administrator
+
+			# Render the games page as admin
+			return render_template('games.html', 
+				home = '/admin', headers = headers, data = data)
+
+		else: # User is not administrator
+
+			# Render the games page as user
+			return render_template('games.html', 
+				home = '/home', headers = headers, data = data)
+
+	except Exception as exception:
+
+		# Render the games page without data
+		return render_template('games.html', 
+			headers = headers)
+
 # HTML: Super Bowls Page
 @app.route('/database/superbowls')
 def render_superbowls():
+
+	# Connect to the database
+	database = mysql.connect()
+	cursor = database.cursor()
+
+	# Query the database for headers
+	cursor.callproc('get_headers', ('superbowls',))
+
+	# Retrieve data from procedure
+	headers = cursor.fetchall()
+
+	# Query database
+	cursor.callproc('preview_table', ('superbowls',))
+
+	# Retrieve data from procedure
+	data = cursor.fetchall()
 
 	if session.get('admin'): # User is administrator
 
@@ -351,9 +491,71 @@ def render_superbowls():
 		return render_template('superbowls.html', 
 			home = '/home')
 
+# BACKEND: Query Super Bowls Method
+@app.route('/database/superbowls', methods = ['POST'])
+def query_coaches():
+	try:
+		# Read posted values from user interface
+		attribute = request.form['query_attribute'] # Query attribute
+		operator = request.form['query_operator'] # Query operator
+		input = request.form['query_input'] # Query input	
+		sort_attribute = request.form['sort_attribute'] # Sorting attribute
+		entries = request.form['limit'] # Limit entries value
+		
+		# Connect to the database
+		database = mysql.connect()
+		cursor = database.cursor()
+
+		# Query the database for headers
+		cursor.callproc('get_headers', ('superbowls',))
+
+		# Retrieve data from procedure
+		headers = cursor.fetchall()
+
+		# Query database
+		cursor.callproc('query', 
+			('superbowls', attribute, operator, input, sort_attribute, entries))
+
+		# Retrieve data from procedure
+		data = cursor.fetchall()
+
+		if session.get('admin'): # User is administrator
+
+			# Render the superbowls page as admin
+			return render_template('superbowls.html', 
+				home = '/admin', headers = headers, data = data)
+
+		else: # User is not administrator
+
+			# Render the superbowls page as user
+			return render_template('superbowls.html', 
+				home = '/home', headers = headers, data = data)
+
+	except Exception as exception:
+
+		# Render the superbowls page without data
+		return render_template('superbowls.html', 
+			headers = headers)
+
 # HTML: Franchises Page
 @app.route('/database/franchises')
 def render_franchises():
+
+	# Connect to the database
+	database = mysql.connect()
+	cursor = database.cursor()
+
+	# Query the database for headers
+	cursor.callproc('get_headers', ('franchises',))
+
+	# Retrieve data from procedure
+	headers = cursor.fetchall()
+
+	# Query database
+	cursor.callproc('preview_table', ('franchises',))
+
+	# Retrieve data from procedure
+	data = cursor.fetchall()
 
 	if session.get('admin'): # User is administrator
 
@@ -367,9 +569,71 @@ def render_franchises():
 		return render_template('franchises.html', 
 			home = '/home')
 
+# BACKEND: Query Franchises Method
+@app.route('/database/franchises', methods = ['POST'])
+def query_coaches():
+	try:
+		# Read posted values from user interface
+		attribute = request.form['query_attribute'] # Query attribute
+		operator = request.form['query_operator'] # Query operator
+		input = request.form['query_input'] # Query input	
+		sort_attribute = request.form['sort_attribute'] # Sorting attribute
+		entries = request.form['limit'] # Limit entries value
+		
+		# Connect to the database
+		database = mysql.connect()
+		cursor = database.cursor()
+
+		# Query the database for headers
+		cursor.callproc('get_headers', ('franchises',))
+
+		# Retrieve data from procedure
+		headers = cursor.fetchall()
+
+		# Query database
+		cursor.callproc('query', 
+			('franchises', attribute, operator, input, sort_attribute, entries))
+
+		# Retrieve data from procedure
+		data = cursor.fetchall()
+
+		if session.get('admin'): # User is administrator
+
+			# Render the franchises page as admin
+			return render_template('franchises.html', 
+				home = '/admin', headers = headers, data = data)
+
+		else: # User is not administrator
+
+			# Render the franchises page as user
+			return render_template('franchises.html', 
+				home = '/home', headers = headers, data = data)
+
+	except Exception as exception:
+
+		# Render the franchises page without data
+		return render_template('franchises.html', 
+			headers = headers)
+
 # HTML: Teams Page
 @app.route('/database/teams')
 def render_teams():
+
+	# Connect to the database
+	database = mysql.connect()
+	cursor = database.cursor()
+
+	# Query the database for headers
+	cursor.callproc('get_headers', ('teams',))
+
+	# Retrieve data from procedure
+	headers = cursor.fetchall()
+
+	# Query database
+	cursor.callproc('preview_table', ('teams',))
+
+	# Retrieve data from procedure
+	data = cursor.fetchall()
 
 	if session.get('admin'): # User is administrator
 
@@ -382,6 +646,52 @@ def render_teams():
 		# Render the teams page as user
 		return render_template('teams.html', 
 			home = '/home')
+
+# BACKEND: Query Teams Method
+@app.route('/database/teams', methods = ['POST'])
+def query_coaches():
+	try:
+		# Read posted values from user interface
+		attribute = request.form['query_attribute'] # Query attribute
+		operator = request.form['query_operator'] # Query operator
+		input = request.form['query_input'] # Query input	
+		sort_attribute = request.form['sort_attribute'] # Sorting attribute
+		entries = request.form['limit'] # Limit entries value
+		
+		# Connect to the database
+		database = mysql.connect()
+		cursor = database.cursor()
+
+		# Query the database for headers
+		cursor.callproc('get_headers', ('teams',))
+
+		# Retrieve data from procedure
+		headers = cursor.fetchall()
+
+		# Query database
+		cursor.callproc('query', 
+			('teams', attribute, operator, input, sort_attribute, entries))
+
+		# Retrieve data from procedure
+		data = cursor.fetchall()
+
+		if session.get('admin'): # User is administrator
+
+			# Render the teams page as admin
+			return render_template('teams.html', 
+				home = '/admin', headers = headers, data = data)
+
+		else: # User is not administrator
+
+			# Render the teams page as user
+			return render_template('teams.html', 
+				home = '/home', headers = headers, data = data)
+
+	except Exception as exception:
+
+		# Render the teams page without data
+		return render_template('teams.html', 
+			headers = headers)
 
 # HTML: Admin Page
 @app.route('/admin')
