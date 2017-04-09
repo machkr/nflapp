@@ -345,6 +345,7 @@ def query_players():
 		operator = request.form['query_operator'] # Query operator
 		input = request.form['query_input'] # Query input	
 		sort_attribute = request.form['sort_attribute'] # Sorting attribute
+		sort_type = request.form['sort_type'] # Sorting type
 		entries = request.form['limit'] # Limit entries value
 		
 		# Connect to the database
@@ -359,7 +360,7 @@ def query_players():
 
 		# Query database
 		cursor.callproc('query', 
-			('players', attribute, operator, input, sort_attribute, entries))
+			('players', attribute, operator, input, sort_attribute, sort_type, entries))
 
 		# Retrieve data from procedure
 		data = cursor.fetchall()
@@ -423,6 +424,7 @@ def query_games():
 		operator = request.form['query_operator'] # Query operator
 		input = request.form['query_input'] # Query input	
 		sort_attribute = request.form['sort_attribute'] # Sorting attribute
+		sort_type = request.form['sort_type'] # Sorting type
 		entries = request.form['limit'] # Limit entries value
 		
 		# Connect to the database
@@ -437,7 +439,7 @@ def query_games():
 
 		# Query database
 		cursor.callproc('query', 
-			('games', attribute, operator, input, sort_attribute, entries))
+			('games', attribute, operator, input, sort_attribute, sort_type, entries))
 
 		# Retrieve data from procedure
 		data = cursor.fetchall()
@@ -501,6 +503,7 @@ def query_superbowls():
 		operator = request.form['query_operator'] # Query operator
 		input = request.form['query_input'] # Query input	
 		sort_attribute = request.form['sort_attribute'] # Sorting attribute
+		sort_type = request.form['sort_type'] # Sorting type
 		entries = request.form['limit'] # Limit entries value
 		
 		# Connect to the database
@@ -515,7 +518,7 @@ def query_superbowls():
 
 		# Query database
 		cursor.callproc('query', 
-			('superbowls', attribute, operator, input, sort_attribute, entries))
+			('superbowls', attribute, operator, input, sort_attribute, sort_type, entries))
 
 		# Retrieve data from procedure
 		data = cursor.fetchall()
@@ -579,6 +582,7 @@ def query_franchises():
 		operator = request.form['query_operator'] # Query operator
 		input = request.form['query_input'] # Query input	
 		sort_attribute = request.form['sort_attribute'] # Sorting attribute
+		sort_type = request.form['sort_type'] # Sorting type
 		entries = request.form['limit'] # Limit entries value
 		
 		# Connect to the database
@@ -593,7 +597,7 @@ def query_franchises():
 
 		# Query database
 		cursor.callproc('query', 
-			('franchises', attribute, operator, input, sort_attribute, entries))
+			('franchises', attribute, operator, input, sort_attribute, sort_type, entries))
 
 		# Retrieve data from procedure
 		data = cursor.fetchall()
@@ -657,6 +661,7 @@ def query_teams():
 		operator = request.form['query_operator'] # Query operator
 		input = request.form['query_input'] # Query input	
 		sort_attribute = request.form['sort_attribute'] # Sorting attribute
+		sort_type = request.form['sort_type'] # Sorting type
 		entries = request.form['limit'] # Limit entries value
 		
 		# Connect to the database
@@ -671,7 +676,7 @@ def query_teams():
 
 		# Query database
 		cursor.callproc('query', 
-			('teams', attribute, operator, input, sort_attribute, entries))
+			('teams', attribute, operator, input, sort_attribute, sort_type, entries))
 
 		# Retrieve data from procedure
 		data = cursor.fetchall()
