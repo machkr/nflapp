@@ -41,8 +41,84 @@
 				<h3 class="text-muted">NFLDB: An NFL Database</h3>
 			</div>
 
-			<div class="jumbotron">
-				<h1>Players</h1>
+			<div class="container-fluid">
+				<div class="row">
+					<form class="container-fluid" action="/database/players" method="post" id="players_query" role="form">
+						<div class="form-group">
+							<div class="input-group">
+								<span class="input-group-addon">Attribute</span>
+								<select class="selectpicker show-tick" data-width="auto" data-live-search="true" title="None" name="query_attribute">
+									<option value=''></option>
+									{% for header in headers %}
+										<option value="{{ header[0] }}">{{ header[0] }}</option>
+									{% endfor %}
+								</select>
+
+								<span class="input-group-addon">Operator</span>
+								<select class="selectpicker show-tick" data-width="auto" title="None" name="query_operator">
+									<option value=''></option>
+									<option value='<'><</option>
+									<option value='<='><=</option>
+									<option value='='>=</option>
+									<option value='!='>!=</option>
+									<option value='>='>>=</option>
+									<option value='>'>></option>
+								</select>
+
+								<span class="input-group-addon">Input</span>
+								<input type="text" class="form-control" placeholder="Search Query" name="query_input"/>
+
+								<span class="input-group-addon">Sort By</span>
+								<select class="selectpicker show-tick" data-width="auto" data-live-search="true" title="None" name="sort_attribute">
+									<option value=''></option>
+									{% for header in headers %}
+										<option value="{{ header[0] }}">{{ header[0] }}</option>
+									{% endfor %}
+								</select>
+
+								<span class="input-group-addon">Limit</span>
+								<select class="selectpicker show-tick" data-width="auto" title="None" name="limit">
+									<option value=''></option>
+									<option value='10'>10</option>
+									<option value='25'>25</option>
+									<option value='50'>50</option>
+									<option value='100'>100</option>
+								</select>
+
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-primary">
+										<span class="glyphicon glyphicon-search"></span>
+									</button>
+								</span>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<br/>
+
+			<div class="table">
+				<table class="table table-hover table-responsive" style = "width:95%" align="center">
+					<thead class="thead-default">
+						<tr>
+							<th>#</th>
+							{% for header in headers %}
+								<th>{{ header[0] }}</th>
+							{% endfor %}
+						</tr>
+					</thead>
+					<tbody>
+						{% for row in data %}
+							<tr>
+								<th scope="row">{{ data.index(row) + 1 }}</th>
+								{% for d in row %}
+									<td>{{ d }}</td>
+								{% endfor %}
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
 			</div>
 
 			<footer class="footer">
