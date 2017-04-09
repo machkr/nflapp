@@ -327,13 +327,13 @@ def render_players():
 
 		# Render the admin home page
 		return render_template('players.html', 
-			home = '/admin')
+			home = '/admin', headers = headers, data = data)
 
 	else: # User is not administrator
 
 		# Render the user home page
 		return render_template('players.html', 
-			home = '/home')
+			home = '/home', headers = headers, data = data)
 
 # BACKEND: Query Players Method
 @app.route('/database/players', methods = ['POST'])
@@ -405,13 +405,13 @@ def render_games():
 
 		# Render the games page as admin
 		return render_template('games.html', 
-			home = '/admin')
+			home = '/admin', headers = headers, data = data)
 
 	else: # User is not administrator
 
 		# Render the games page as user
 		return render_template('games.html', 
-			home = '/home')
+			home = '/home', headers = headers, data = data)
 
 # BACKEND: Query Games Method
 @app.route('/database/games', methods = ['POST'])
@@ -483,13 +483,13 @@ def render_superbowls():
 
 		# Render the super bowls page as admin
 		return render_template('superbowls.html', 
-			home = '/admin')
+			home = '/admin', headers = headers, data = data)
 
 	else: # User is not administrator
 
 		# Render the super bowls page as user
 		return render_template('superbowls.html', 
-			home = '/home')
+			home = '/home', headers = headers, data = data)
 
 # BACKEND: Query Super Bowls Method
 @app.route('/database/superbowls', methods = ['POST'])
@@ -561,13 +561,13 @@ def render_franchises():
 
 		# Render the franchises page as admin
 		return render_template('franchises.html', 
-			home = '/admin')
+			home = '/admin', headers = headers, data = data)
 
 	else: # User is not administrator
 
 		# Render the franchises page as user
 		return render_template('franchises.html', 
-			home = '/home')
+			home = '/home', headers = headers, data = data)
 
 # BACKEND: Query Franchises Method
 @app.route('/database/franchises', methods = ['POST'])
@@ -639,13 +639,13 @@ def render_teams():
 
 		# Render the teams page as admin
 		return render_template('teams.html', 
-			home = '/admin')
+			home = '/admin', headers = headers, data = data)
 
 	else: # User is not administrator
 
 		# Render the teams page as user
 		return render_template('teams.html', 
-			home = '/home')
+			home = '/home', headers = headers, data = data)
 
 # BACKEND: Query Teams Method
 @app.route('/database/teams', methods = ['POST'])
