@@ -187,13 +187,13 @@ def render_home():
 
 			# Render the admin home page
 			return render_template('home.html', 
-				home = '/admin')
+				home = '/admin', username = session['user'])
 
 		else: # User is not administrator
 
 			# Render the user home page
 			return render_template('home.html', 
-				home = '/home')
+				home = '/home', username = session['user'])
 
 	else: # User not logged in
 
@@ -707,7 +707,7 @@ def render_admin():
 	if session.get('admin'): # User is admin
 
 		# Render the admin page
-		return render_template('admin.html')
+		return render_template('admin.html', username = session['user'])
 
 	else:
 
