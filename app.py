@@ -130,8 +130,6 @@ def login():
 				# Set current session user
 				session['user'] = username
 
-				print("Login (Admin):", data[0])
-
 				if data[0] == 1: # User is administrator
 
 					# Set current session admin status
@@ -238,10 +236,11 @@ def render_coaches():
 	# Query the database for headers
 	cursor.callproc('get_headers', ('coaches',))
 
+	# Retrieve data from procedure
 	headers = cursor.fetchall()
 
-	# Query database -- will be stored procedure eventually
-	cursor.execute("SELECT * FROM coaches LIMIT 100")
+	# Query database
+	cursor.callproc('preview_table', ('coaches',))
 
 	# Retrieve data from procedure
 	data = cursor.fetchall()
@@ -263,9 +262,50 @@ def render_coaches():
 def query_coaches():
 	try:
 		# Read posted values from user interface
-		if request.form['limit']: # Limit checkbox checked
-			entries = request.form['entries']
 
+		# Query attribute
+		attribute = request.form['query_attribute']
+
+		# Query operator
+		operator = request.form['query_operator']
+
+		# Query input
+		input = request.form['query_input']
+
+		# Sorting attribute
+		sort_attribute = request.form['sort_attribute']
+
+		# Limit entries value
+		entries = request.form['limit'] 
+		
+		# Connect to the database
+		database = mysql.connect()
+		cursor = database.cursor()
+
+		# Query the database for headers
+		cursor.callproc('get_headers', ('coaches',))
+
+		# Retrieve data from procedure
+		headers = cursor.fetchall()
+
+		# Query database
+		cursor.callproc('query', 
+			('coaches', attribute, operator, input, sort_attribute, entries))
+
+		# Retrieve data from procedure
+		data = cursor.fetchall()
+
+		if session.get('admin'): # User is administrator
+
+			# Render the coaches page as admin
+			return render_template('coaches.html', 
+				home = '/admin', headers = headers, data = data)
+
+		else: # User is not administrator
+
+			# Render the coaches page as user
+			return render_template('coaches.html', 
+				home = '/home', headers = headers, data = data)
 
 	except Exception as exception:
 
