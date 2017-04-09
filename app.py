@@ -336,7 +336,7 @@ def render_players():
 			home = '/home')
 
 # BACKEND: Query Players Method
-@app.route('/database/coaches', methods = ['POST'])
+@app.route('/database/players', methods = ['POST'])
 def query_players():
 	try:
 		# Read posted values from user interface
@@ -415,7 +415,7 @@ def render_games():
 
 # BACKEND: Query Games Method
 @app.route('/database/games', methods = ['POST'])
-def query_coaches():
+def query_games():
 	try:
 		# Read posted values from user interface
 		attribute = request.form['query_attribute'] # Query attribute
@@ -493,7 +493,7 @@ def render_superbowls():
 
 # BACKEND: Query Super Bowls Method
 @app.route('/database/superbowls', methods = ['POST'])
-def query_coaches():
+def query_superbowls():
 	try:
 		# Read posted values from user interface
 		attribute = request.form['query_attribute'] # Query attribute
@@ -571,7 +571,7 @@ def render_franchises():
 
 # BACKEND: Query Franchises Method
 @app.route('/database/franchises', methods = ['POST'])
-def query_coaches():
+def query_franchises():
 	try:
 		# Read posted values from user interface
 		attribute = request.form['query_attribute'] # Query attribute
@@ -649,7 +649,7 @@ def render_teams():
 
 # BACKEND: Query Teams Method
 @app.route('/database/teams', methods = ['POST'])
-def query_coaches():
+def query_teams():
 	try:
 		# Read posted values from user interface
 		attribute = request.form['query_attribute'] # Query attribute
