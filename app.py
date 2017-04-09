@@ -262,21 +262,11 @@ def render_coaches():
 def query_coaches():
 	try:
 		# Read posted values from user interface
-
-		# Query attribute
-		attribute = request.form['query_attribute']
-
-		# Query operator
-		operator = request.form['query_operator']
-
-		# Query input
-		input = request.form['query_input']
-
-		# Sorting attribute
-		sort_attribute = request.form['sort_attribute']
-
-		# Limit entries value
-		entries = request.form['limit'] 
+		attribute = request.form['query_attribute'] # Query attribute
+		operator = request.form['query_operator'] # Query operator
+		input = request.form['query_input'] # Query input	
+		sort_attribute = request.form['sort_attribute'] # Sorting attribute
+		entries = request.form['limit'] # Limit entries value
 		
 		# Connect to the database
 		database = mysql.connect()
@@ -309,11 +299,9 @@ def query_coaches():
 
 	except Exception as exception:
 
-		# Store error message in session cookie
-		session['error'] = str(exception)
-
-		# Redirect to error page
-		return redirect('/error')
+		# Render the coaches page without data
+		return render_template('coaches.html', 
+			headers = headers)
 
 # HTML: Players Page
 @app.route('/database/players')
