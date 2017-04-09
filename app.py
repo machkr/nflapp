@@ -266,6 +266,7 @@ def query_coaches():
 		operator = request.form['query_operator'] # Query operator
 		input = request.form['query_input'] # Query input	
 		sort_attribute = request.form['sort_attribute'] # Sorting attribute
+		sort_type = request.form['sort_type'] # Sorting type
 		entries = request.form['limit'] # Limit entries value
 		
 		# Connect to the database
@@ -280,7 +281,7 @@ def query_coaches():
 
 		# Query database
 		cursor.callproc('query', 
-			('coaches', attribute, operator, input, sort_attribute, entries))
+			('coaches', attribute, operator, input, sort_attribute, sort_type, entries))
 
 		# Retrieve data from procedure
 		data = cursor.fetchall()
