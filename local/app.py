@@ -127,6 +127,9 @@ def login():
 				# Retrieve data from procedure
 				data = cursor.fetchone()
 
+				# Commit changes to database
+				database.commit()
+
 				# Set current session user
 				session['user'] = username
 
