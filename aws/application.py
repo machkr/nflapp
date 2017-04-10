@@ -2,35 +2,35 @@ from flask import Flask, render_template, json, request, redirect, session
 from flaskext.mysql import MySQL
 from bcrypt import hashpw, checkpw, gensalt
 from binascii import hexlify
-from os import urandom
+from os import urandom, environ
 
 mysql = MySQL() # Initialize database
-app = Flask(__name__) # Shorten application object
-app.secret_key = hexlify(urandom(32)) # Generate session key
+application = Flask(__name__) # Shorten application object
+application.secret_key = hexlify(urandom(32)) # Generate session key
 
 # MySQL Configuration
-app.config['MYSQL_DATABASE_USER'] = 'admin'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'zI0R378CjfTF0sljMvOgzrFXJwSlhPbH1Fe'
-app.config['MYSQL_DATABASE_DB'] = 'nfldb'
-app.config['MYSQL_DATABASE_HOST'] = 'nfldb.cvfrpuoosleq.us-east-1.rds.amazonaws.com'
-mysql.init_app(app)
+application.config['MYSQL_DATABASE_USER'] = 'admin'
+application.config['MYSQL_DATABASE_PASSWORD'] = 'zI0R378CjfTF0sljMvOgzrFXJwSlhPbH1Fe'
+application.config['MYSQL_DATABASE_DB'] = 'nfldb'
+application.config['MYSQL_DATABASE_HOST'] = 'nfldb.cvfrpuoosleq.us-east-1.rds.amazonaws.com'
+mysql.init_app(application)
 
 # HTML: Home Page
-@app.route('/')
+@application.route('/')
 def main():
 
 	# Render home page
 	return render_template('index.html')
 
 # HTML: Register Page
-@app.route('/register')
+@application.route('/register')
 def render_register():
 
 	# Render user registration page
 	return render_template('register.html')
 
 # BACKEND: Register Method
-@app.route('/register', methods = ['POST'])
+@application.route('/register', methods = ['POST'])
 def register():
 	try:
 		# Read posted values from user interface
@@ -86,14 +86,14 @@ def register():
 		return redirect('/error')
 
 # HTML: Log In Page
-@app.route('/login')
+@application.route('/login')
 def render_login():
 
 	# Render the login page
 	return render_template('login.html')
 
 # BACKEND: Log In Method
-@app.route('/login', methods = ['POST'])
+@application.route('/login', methods = ['POST'])
 def login():
 	try:
 		# Read posted values from user interface
@@ -177,7 +177,7 @@ def login():
 		return redirect('/error')
 
 # HTML: User Home Page
-@app.route('/home')
+@application.route('/home')
 def render_home():
 
 	# If there is a username stored in the session coookie
@@ -204,7 +204,7 @@ def render_home():
 		return redirect('/error')
 
 # HTML: Error Page
-@app.route('/error')
+@application.route('/error')
 def render_error():
 
 	# Retrieve error messages stored in session cookie
@@ -215,7 +215,7 @@ def render_error():
 		error = message)
 
 # BACKEND: Log Out Method
-@app.route('/logout')
+@application.route('/logout')
 def logout():
 
 	# Remove stored username from cookie
@@ -226,7 +226,7 @@ def logout():
 	return redirect('/')
 
 # HTML: Coaches Page
-@app.route('/database/coaches')
+@application.route('/database/coaches')
 def render_coaches():
 
 	# Connect to the database
@@ -245,6 +245,10 @@ def render_coaches():
 	# Retrieve data from procedure
 	data = cursor.fetchall()
 
+	# Disconnect from database
+	cursor.close
+	database.close
+
 	if session.get('admin'): # User is administrator
 
 		# Render the coaches page as admin
@@ -258,7 +262,7 @@ def render_coaches():
 			home = '/home', headers = headers, data = data)
 
 # BACKEND: Query Coaches Method
-@app.route('/database/coaches', methods = ['POST'])
+@application.route('/database/coaches', methods = ['POST'])
 def query_coaches():
 	try:
 		# Read posted values from user interface
@@ -286,6 +290,11 @@ def query_coaches():
 		# Retrieve data from procedure
 		data = cursor.fetchall()
 
+		# Disconnect from database
+		cursor.close
+		database.close
+
+
 		if session.get('admin'): # User is administrator
 
 			# Render the coaches page as admin
@@ -305,7 +314,7 @@ def query_coaches():
 			headers = headers)
 
 # HTML: Players Page
-@app.route('/database/players')
+@application.route('/database/players')
 def render_players():
 
 	# Connect to the database
@@ -324,6 +333,10 @@ def render_players():
 	# Retrieve data from procedure
 	data = cursor.fetchall()
 
+	# Disconnect from database
+	cursor.close
+	database.close
+
 	if session.get('admin'): # User is administrator
 
 		# Render the admin home page
@@ -337,7 +350,7 @@ def render_players():
 			home = '/home', headers = headers, data = data)
 
 # BACKEND: Query Players Method
-@app.route('/database/players', methods = ['POST'])
+@application.route('/database/players', methods = ['POST'])
 def query_players():
 	try:
 		# Read posted values from user interface
@@ -365,6 +378,10 @@ def query_players():
 		# Retrieve data from procedure
 		data = cursor.fetchall()
 
+		# Disconnect from database
+		cursor.close
+		database.close
+
 		if session.get('admin'): # User is administrator
 
 			# Render the players page as admin
@@ -384,7 +401,7 @@ def query_players():
 			headers = headers)
 
 # HTML: Games Page
-@app.route('/database/games')
+@application.route('/database/games')
 def render_games():
 
 	# Connect to the database
@@ -403,6 +420,10 @@ def render_games():
 	# Retrieve data from procedure
 	data = cursor.fetchall()
 
+	# Disconnect from database
+	cursor.close
+	database.close
+
 	if session.get('admin'): # User is administrator
 
 		# Render the games page as admin
@@ -416,7 +437,7 @@ def render_games():
 			home = '/home', headers = headers, data = data)
 
 # BACKEND: Query Games Method
-@app.route('/database/games', methods = ['POST'])
+@application.route('/database/games', methods = ['POST'])
 def query_games():
 	try:
 		# Read posted values from user interface
@@ -444,6 +465,10 @@ def query_games():
 		# Retrieve data from procedure
 		data = cursor.fetchall()
 
+		# Disconnect from database
+		cursor.close
+		database.close
+
 		if session.get('admin'): # User is administrator
 
 			# Render the games page as admin
@@ -463,7 +488,7 @@ def query_games():
 			headers = headers)
 
 # HTML: Super Bowls Page
-@app.route('/database/superbowls')
+@application.route('/database/superbowls')
 def render_superbowls():
 
 	# Connect to the database
@@ -482,6 +507,10 @@ def render_superbowls():
 	# Retrieve data from procedure
 	data = cursor.fetchall()
 
+	# Disconnect from database
+	cursor.close
+	database.close
+
 	if session.get('admin'): # User is administrator
 
 		# Render the super bowls page as admin
@@ -495,7 +524,7 @@ def render_superbowls():
 			home = '/home', headers = headers, data = data)
 
 # BACKEND: Query Super Bowls Method
-@app.route('/database/superbowls', methods = ['POST'])
+@application.route('/database/superbowls', methods = ['POST'])
 def query_superbowls():
 	try:
 		# Read posted values from user interface
@@ -523,6 +552,10 @@ def query_superbowls():
 		# Retrieve data from procedure
 		data = cursor.fetchall()
 
+		# Disconnect from database
+		cursor.close
+		database.close
+
 		if session.get('admin'): # User is administrator
 
 			# Render the superbowls page as admin
@@ -542,7 +575,7 @@ def query_superbowls():
 			headers = headers)
 
 # HTML: Franchises Page
-@app.route('/database/franchises')
+@application.route('/database/franchises')
 def render_franchises():
 
 	# Connect to the database
@@ -561,6 +594,10 @@ def render_franchises():
 	# Retrieve data from procedure
 	data = cursor.fetchall()
 
+	# Disconnect from database
+	cursor.close
+	database.close
+
 	if session.get('admin'): # User is administrator
 
 		# Render the franchises page as admin
@@ -574,7 +611,7 @@ def render_franchises():
 			home = '/home', headers = headers, data = data)
 
 # BACKEND: Query Franchises Method
-@app.route('/database/franchises', methods = ['POST'])
+@application.route('/database/franchises', methods = ['POST'])
 def query_franchises():
 	try:
 		# Read posted values from user interface
@@ -602,6 +639,10 @@ def query_franchises():
 		# Retrieve data from procedure
 		data = cursor.fetchall()
 
+		# Disconnect from database
+		cursor.close
+		database.close
+
 		if session.get('admin'): # User is administrator
 
 			# Render the franchises page as admin
@@ -621,7 +662,7 @@ def query_franchises():
 			headers = headers)
 
 # HTML: Teams Page
-@app.route('/database/teams')
+@application.route('/database/teams')
 def render_teams():
 
 	# Connect to the database
@@ -640,6 +681,10 @@ def render_teams():
 	# Retrieve data from procedure
 	data = cursor.fetchall()
 
+	# Disconnect from database
+	cursor.close
+	database.close
+
 	if session.get('admin'): # User is administrator
 
 		# Render the teams page as admin
@@ -653,7 +698,7 @@ def render_teams():
 			home = '/home', headers = headers, data = data)
 
 # BACKEND: Query Teams Method
-@app.route('/database/teams', methods = ['POST'])
+@application.route('/database/teams', methods = ['POST'])
 def query_teams():
 	try:
 		# Read posted values from user interface
@@ -681,6 +726,10 @@ def query_teams():
 		# Retrieve data from procedure
 		data = cursor.fetchall()
 
+		# Disconnect from database
+		cursor.close
+		database.close
+
 		if session.get('admin'): # User is administrator
 
 			# Render the teams page as admin
@@ -700,7 +749,7 @@ def query_teams():
 			headers = headers)
 
 # HTML: Admin Page
-@app.route('/admin')
+@application.route('/admin')
 def render_admin():
 
 	# If the user's admin status is 'True'
@@ -717,5 +766,93 @@ def render_admin():
 		# Redirect to error page
 		return redirect('/error')
 
+# HTML: Config Page
+@application.route('/admin/config')
+def render_config():
+
+	# Connect to the database
+	database = mysql.connect()
+	cursor = database.cursor()
+
+	# Query the database for headers
+	cursor.callproc('get_users')
+
+	# Retrieve data from procedure
+	users = cursor.fetchall()
+
+	# Query database
+	cursor.callproc('get_admins')
+
+	# Retrieve data from procedure
+	admins = cursor.fetchall()
+
+	# Query database
+	cursor.callproc('get_all_usernames')
+
+	# Retrieve data from procedure
+	usernames = cursor.fetchall()
+
+	# Disconnect from database
+	cursor.close
+	database.close
+
+	# If the user's admin status is 'True'
+	if session.get('admin'): # User is admin
+
+		# Render the admin page
+		return render_template('config.html', 
+			users = users, admins = admins, usernames = usernames)
+
+	else:
+
+		# Store error message in session cookie
+		session['error'] = 'Unauthorized Access'
+
+		# Redirect to error page
+		return redirect('/error')
+
+# BACKEND: Query Config Page
+@application.route('/admin/config', methods = ['POST'])
+def query_config():
+	try:
+		# Read posted values from user interface
+		username = request.form['query_username'] # Query username
+		action = request.form['query_action'] # Query action
+		
+		# Connect to the database
+		database = mysql.connect()
+		cursor = database.cursor()
+
+		if action == 'promote':
+
+			# Promote the user
+			cursor.callproc('set_user', (username, 1,))
+
+		if action == 'demote':
+
+			# Promote the user
+			cursor.callproc('set_user', (username, 0,))
+
+		if action == 'delete':
+
+			# Delete the user
+			cursor.callproc('delete_user', (username,))
+
+		# Commit changes to database
+		database.commit()
+
+		# Disconnect from database
+		cursor.close
+		database.close
+
+		# Redirect to config page
+		return redirect('/admin/config')
+
+	except Exception as exception:
+
+		# Render the teams page without data
+		return render_template('teams.html', 
+			headers = headers)
+
 if __name__ == "__main__":
-	app.run(debug = True, use_reloader = True)
+	application.run()

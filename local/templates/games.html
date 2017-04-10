@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>NFLDB</title>
+
+		<link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+		<link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+		<link href="../static/stylesheet.css" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
+
+		<script src="../static/js/jquery-3.2.0.js"></script>
+		<script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+	</head>
+
+	<body>
+		<div class="container-fluid">
+			<div class="header">
+				<nav>
+					<ul class="nav nav-pills pull-right">
+						<li role="presentation"><a href="{{ home }}">Home</a></li>
+						<li role="presentation" class="dropdown active">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="{{ home }}" role="button" aria-haspopup="true" aria-expanded="false">Database<span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li role="presentation"><a href="/database/coaches">Coaches</a></li>
+								<li role="presentation"><a href="/database/players">Players</a></li>
+								<li class="divider"></li>
+								<li role="presentation" class="active"><a href="/database/games">Games</a></li>
+								<li role="presentation"><a href="/database/superbowls">Super Bowls</a></li>
+								<li class="divider"></li>
+								<li role="presentation"><a href="/database/franchises">Franchises</a></li>
+								<li role="presentation"><a href="/database/teams">Teams</a></li>
+							</ul>
+						</li>
+						<li role="presentation"><a href="/logout">Log Out</a></li>
+					</ul>
+				</nav>
+				<h3 class="text-muted">NFLDB: An NFL Database</h3>
+			</div>
+			
+			<div class="container-fluid">
+				<div class="row">
+					<form class="container-fluid" action="/database/games" method="post" id="games_query" role="form">
+						<div class="form-group">
+							<div class="input-group">
+								<span class="input-group-addon">Attribute</span>
+								<select class="selectpicker show-tick" data-width="auto" data-live-search="true" title="None" name="query_attribute">
+									<option value=''></option>
+									{% for header in headers %}
+										<option value="{{ header[0] }}">{{ header[0] }}</option>
+									{% endfor %}
+								</select>
+
+								<span class="input-group-addon">Operator</span>
+								<select class="selectpicker show-tick" data-width="auto" title="None" name="query_operator">
+									<option value=''></option>
+									<option value='<'><</option>
+									<option value='<='><=</option>
+									<option value='='>=</option>
+									<option value='!='>!=</option>
+									<option value='>='>>=</option>
+									<option value='>'>></option>
+								</select>
+
+								<span class="input-group-addon">Input</span>
+								<input type="text" class="form-control" placeholder="Search Query" name="query_input"/>
+
+								<span class="input-group-addon">Sort By</span>
+								<select class="selectpicker show-tick" data-width="auto" data-live-search="true" title="None" name="sort_attribute">
+									<option value=''></option>
+									{% for header in headers %}
+										<option value="{{ header[0] }}">{{ header[0] }}</option>
+									{% endfor %}
+								</select>
+
+								<select class="selectpicker show-tick" data-width="auto" title="Ascending" name="sort_type">
+									<option value='ASC'>Ascending</option>
+									<option value='DESC'>Descending</option>
+								</select>								
+								
+								<span class="input-group-addon">Limit</span>
+								<select class="selectpicker show-tick" data-width="auto" title="None" name="limit">
+									<option value=''></option>
+									<option value='10'>10</option>
+									<option value='25'>25</option>
+									<option value='50'>50</option>
+									<option value='100'>100</option>
+								</select>
+
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-primary">
+										<span class="glyphicon glyphicon-search"></span>
+									</button>
+								</span>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<br/>
+
+			<div class="table">
+				<table class="table table-hover table-responsive" style = "width:95%" align="center">
+					<thead class="thead-default">
+						<tr>
+							<th>#</th>
+							{% for header in headers %}
+								<th>{{ header[0] }}</th>
+							{% endfor %}
+						</tr>
+					</thead>
+					<tbody>
+						{% for row in data %}
+							<tr>
+								<th scope="row">{{ data.index(row) + 1 }}</th>
+								{% for d in row %}
+									<td>{{ d }}</td>
+								{% endfor %}
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+			<footer class="footer">
+				<p>&copy; 2017</p>
+			</footer>
+		</div>
+	</body>
+</html>

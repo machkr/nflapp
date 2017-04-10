@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>NFLDB</title>
+
+		<link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+		<link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+		<link href="../static/stylesheet.css" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
+
+		<script src="../static/js/jquery-3.2.0.js"></script>
+		<script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="header">
+				<nav>
+					<ul class="nav nav-pills pull-right">
+						<li role="presentation"><a href="/admin">Home</a></li>
+						<li role="presentation" class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Database<span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li role="presentation"><a href="/database/coaches">Coaches</a></li>
+								<li role="presentation"><a href="/database/players">Players</a></li>
+								<li class="divider"></li>
+								<li role="presentation"><a href="/database/games">Games</a></li>
+								<li role="presentation"><a href="/database/superbowls">Super Bowls</a></li>
+								<li class="divider"></li>
+								<li role="presentation"><a href="/database/franchises">Franchises</a></li>
+								<li role="presentation"><a href="/database/teams">Teams</a></li>
+							</ul>
+						</li>
+						<li role="presentation"><a href="/logout">Log Out</a></li>
+					</ul>
+				</nav>
+				<h3 class="text-muted">NFLDB: An NFL Database</h3>
+			</div>
+
+			<div class="container-fluid">
+				<div class="row">
+					<form class="container-fluid" action="/admin/config" method="post" id="config_query" role="form">
+						<div class="form-group">
+							<div class="input-group">
+								<span class="input-group-addon">Username</span>
+								<select class="selectpicker show-tick" data-width="auto" data-live-search="true" title="None" name="query_username">
+									<option value=''></option>
+									{% for username in usernames %}
+										<option value="{{ username[0] }}">{{ username[0] }}</option>
+									{% endfor %}
+								</select>
+
+								<span class="input-group-addon">Action</span>
+								<select class="selectpicker show-tick" data-width="auto" name="query_action">
+									<option value=''></option>
+									<option value='promote'>Promote</option>
+									<option value='demote'>Demote</option>
+									<option value='delete'>Delete</option>
+								</select>
+
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-primary">
+										<span class="glyphicon glyphicon-search"></span>
+									</button>
+								</span>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<div class="container-fluid">
+				<div class="col-md-6">
+					<div class="table">
+						<table class="table table-hover table-responsive" align="center">
+						<caption style=" text-align: center">Users</caption>
+							<thead class="thead-default">
+								<tr>
+									<th>#</th>
+									<th>Username</th>
+									<th>Last Logged In</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for row in users %}
+									<tr>
+										<th scope="row">{{ users.index(row) + 1 }}</th>
+										{% for attribute in row %}
+											<td>{{ attribute }}</td>
+										{% endfor %}
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div class="col-md-6">
+					<div class="table">
+						<table class="table table-hover table-responsive" align="center">
+						<caption style=" text-align: center">Administrators</caption>
+							<thead class="thead-default">
+								<tr>
+									<th>#</th>
+									<th>Username</th>
+									<th>Last Logged In</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for row in admins %}
+									<tr>
+										<th scope="row">{{ admins.index(row) + 1 }}</th>
+										{% for attribute in row %}
+											<td>{{ attribute }}</td>
+										{% endfor %}
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<footer class="footer">
+				<p>&copy; 2017</p>
+			</footer>
+		</div>
+	</body>
+</html>
