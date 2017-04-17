@@ -127,6 +127,9 @@ def login():
 				# Retrieve data from procedure
 				data = cursor.fetchone()
 
+				# Commit changes to database
+				database.commit()
+
 				# Set current session user
 				session['user'] = username
 
@@ -220,6 +223,8 @@ def logout():
 
 	# Remove stored username from cookie
 	session.pop('user', None)
+
+	# Remove stored admin status from cookie
 	session.pop('admin', False)
 
 	# Redirect to home page
@@ -229,50 +234,9 @@ def logout():
 @application.route('/database/coaches')
 def render_coaches():
 
-	# Connect to the database
-	database = mysql.connect()
-	cursor = database.cursor()
+	# If there is a username stored in the session coookie
+	if session.get('user'): # User logged in
 
-	# Query the database for headers
-	cursor.callproc('get_headers', ('coaches',))
-
-	# Retrieve data from procedure
-	headers = cursor.fetchall()
-
-	# Query database
-	cursor.callproc('preview_table', ('coaches',))
-
-	# Retrieve data from procedure
-	data = cursor.fetchall()
-
-	# Disconnect from database
-	cursor.close
-	database.close
-
-	if session.get('admin'): # User is administrator
-
-		# Render the coaches page as admin
-		return render_template('coaches.html', 
-			home = '/admin', headers = headers, data = data)
-
-	else: # User is not administrator
-
-		# Render the coaches page as user
-		return render_template('coaches.html', 
-			home = '/home', headers = headers, data = data)
-
-# BACKEND: Query Coaches Method
-@application.route('/database/coaches', methods = ['POST'])
-def query_coaches():
-	try:
-		# Read posted values from user interface
-		attribute = request.form['query_attribute'] # Query attribute
-		operator = request.form['query_operator'] # Query operator
-		input = request.form['query_input'] # Query input	
-		sort_attribute = request.form['sort_attribute'] # Sorting attribute
-		sort_type = request.form['sort_type'] # Sorting type
-		entries = request.form['limit'] # Limit entries value
-		
 		# Connect to the database
 		database = mysql.connect()
 		cursor = database.cursor()
@@ -284,8 +248,7 @@ def query_coaches():
 		headers = cursor.fetchall()
 
 		# Query database
-		cursor.callproc('query', 
-			('coaches', attribute, operator, input, sort_attribute, sort_type, entries))
+		cursor.callproc('preview_table', ('coaches',))
 
 		# Retrieve data from procedure
 		data = cursor.fetchall()
@@ -293,7 +256,6 @@ def query_coaches():
 		# Disconnect from database
 		cursor.close
 		database.close
-
 
 		if session.get('admin'): # User is administrator
 
@@ -307,60 +269,85 @@ def query_coaches():
 			return render_template('coaches.html', 
 				home = '/home', headers = headers, data = data)
 
-	except Exception as exception:
+	else: # User not logged in
 
-		# Render the coaches page without data
-		return render_template('coaches.html', 
-			headers = headers)
+		# Store error message in session cookie
+		session['error'] = 'Unauthorized Access'
+
+		# Redirect to error page
+		return redirect('/error')
+
+# BACKEND: Query Coaches Method
+@application.route('/database/coaches', methods = ['POST'])
+def query_coaches():
+
+	# If there is a username stored in the session coookie
+	if session.get('user'): # User logged in
+
+		try:
+			# Read posted values from user interface
+			attribute = request.form['query_attribute'] # Query attribute
+			operator = request.form['query_operator'] # Query operator
+			input = request.form['query_input'] # Query input	
+			sort_attribute = request.form['sort_attribute'] # Sorting attribute
+			sort_type = request.form['sort_type'] # Sorting type
+			entries = request.form['limit'] # Limit entries value
+			
+			# Connect to the database
+			database = mysql.connect()
+			cursor = database.cursor()
+
+			# Query the database for headers
+			cursor.callproc('get_headers', ('coaches',))
+
+			# Retrieve data from procedure
+			headers = cursor.fetchall()
+
+			# Query database
+			cursor.callproc('query', 
+				('coaches', attribute, operator, input, sort_attribute, sort_type, entries))
+
+			# Retrieve data from procedure
+			data = cursor.fetchall()
+
+			# Disconnect from database
+			cursor.close
+			database.close
+
+
+			if session.get('admin'): # User is administrator
+
+				# Render the coaches page as admin
+				return render_template('coaches.html', 
+					home = '/admin', headers = headers, data = data)
+
+			else: # User is not administrator
+
+				# Render the coaches page as user
+				return render_template('coaches.html', 
+					home = '/home', headers = headers, data = data)
+
+		except Exception as exception:
+
+			# Render the coaches page without data
+			return render_template('coaches.html', 
+				headers = headers)
+
+	else: # User not logged in
+
+		# Store error message in session cookie
+		session['error'] = 'Unauthorized Access'
+
+		# Redirect to error page
+		return redirect('/error')
 
 # HTML: Players Page
 @application.route('/database/players')
 def render_players():
 
-	# Connect to the database
-	database = mysql.connect()
-	cursor = database.cursor()
+	# If there is a username stored in the session coookie
+	if session.get('user'): # User logged in
 
-	# Query the database for headers
-	cursor.callproc('get_headers', ('players',))
-
-	# Retrieve data from procedure
-	headers = cursor.fetchall()
-
-	# Query database
-	cursor.callproc('preview_table', ('players',))
-
-	# Retrieve data from procedure
-	data = cursor.fetchall()
-
-	# Disconnect from database
-	cursor.close
-	database.close
-
-	if session.get('admin'): # User is administrator
-
-		# Render the admin home page
-		return render_template('players.html', 
-			home = '/admin', headers = headers, data = data)
-
-	else: # User is not administrator
-
-		# Render the user home page
-		return render_template('players.html', 
-			home = '/home', headers = headers, data = data)
-
-# BACKEND: Query Players Method
-@application.route('/database/players', methods = ['POST'])
-def query_players():
-	try:
-		# Read posted values from user interface
-		attribute = request.form['query_attribute'] # Query attribute
-		operator = request.form['query_operator'] # Query operator
-		input = request.form['query_input'] # Query input	
-		sort_attribute = request.form['sort_attribute'] # Sorting attribute
-		sort_type = request.form['sort_type'] # Sorting type
-		entries = request.form['limit'] # Limit entries value
-		
 		# Connect to the database
 		database = mysql.connect()
 		cursor = database.cursor()
@@ -372,8 +359,7 @@ def query_players():
 		headers = cursor.fetchall()
 
 		# Query database
-		cursor.callproc('query', 
-			('players', attribute, operator, input, sort_attribute, sort_type, entries))
+		cursor.callproc('preview_table', ('players',))
 
 		# Retrieve data from procedure
 		data = cursor.fetchall()
@@ -384,70 +370,94 @@ def query_players():
 
 		if session.get('admin'): # User is administrator
 
-			# Render the players page as admin
+			# Render the admin home page
 			return render_template('players.html', 
 				home = '/admin', headers = headers, data = data)
 
 		else: # User is not administrator
 
-			# Render the players page as user
+			# Render the user home page
 			return render_template('players.html', 
 				home = '/home', headers = headers, data = data)
 
-	except Exception as exception:
+	else: # User not logged in
 
-		# Render the players page without data
-		return render_template('players.html', 
-			headers = headers)
+		# Store error message in session cookie
+		session['error'] = 'Unauthorized Access'
+
+		# Redirect to error page
+		return redirect('/error')
+
+# BACKEND: Query Players Method
+@application.route('/database/players', methods = ['POST'])
+def query_players():
+
+	# If there is a username stored in the session coookie
+	if session.get('user'): # User logged in
+
+		try:
+			# Read posted values from user interface
+			attribute = request.form['query_attribute'] # Query attribute
+			operator = request.form['query_operator'] # Query operator
+			input = request.form['query_input'] # Query input	
+			sort_attribute = request.form['sort_attribute'] # Sorting attribute
+			sort_type = request.form['sort_type'] # Sorting type
+			entries = request.form['limit'] # Limit entries value
+			
+			# Connect to the database
+			database = mysql.connect()
+			cursor = database.cursor()
+
+			# Query the database for headers
+			cursor.callproc('get_headers', ('players',))
+
+			# Retrieve data from procedure
+			headers = cursor.fetchall()
+
+			# Query database
+			cursor.callproc('query', 
+				('players', attribute, operator, input, sort_attribute, sort_type, entries))
+
+			# Retrieve data from procedure
+			data = cursor.fetchall()
+
+			# Disconnect from database
+			cursor.close
+			database.close
+
+			if session.get('admin'): # User is administrator
+
+				# Render the players page as admin
+				return render_template('players.html', 
+					home = '/admin', headers = headers, data = data)
+
+			else: # User is not administrator
+
+				# Render the players page as user
+				return render_template('players.html', 
+					home = '/home', headers = headers, data = data)
+
+		except Exception as exception:
+
+			# Render the players page without data
+			return render_template('players.html', 
+				headers = headers)
+
+	else: # User not logged in
+
+		# Store error message in session cookie
+		session['error'] = 'Unauthorized Access'
+
+		# Redirect to error page
+		return redirect('/error')
 
 # HTML: Games Page
 @application.route('/database/games')
 def render_games():
 
-	# Connect to the database
-	database = mysql.connect()
-	cursor = database.cursor()
+	# If there is a username stored in the session coookie
+	if session.get('user'): # User logged in
 
-	# Query the database for headers
-	cursor.callproc('get_headers', ('games',))
-
-	# Retrieve data from procedure
-	headers = cursor.fetchall()
-
-	# Query database
-	cursor.callproc('preview_table', ('games',))
-
-	# Retrieve data from procedure
-	data = cursor.fetchall()
-
-	# Disconnect from database
-	cursor.close
-	database.close
-
-	if session.get('admin'): # User is administrator
-
-		# Render the games page as admin
-		return render_template('games.html', 
-			home = '/admin', headers = headers, data = data)
-
-	else: # User is not administrator
-
-		# Render the games page as user
-		return render_template('games.html', 
-			home = '/home', headers = headers, data = data)
-
-# BACKEND: Query Games Method
-@application.route('/database/games', methods = ['POST'])
-def query_games():
-	try:
-		# Read posted values from user interface
-		attribute = request.form['query_attribute'] # Query attribute
-		operator = request.form['query_operator'] # Query operator
-		input = request.form['query_input'] # Query input	
-		sort_attribute = request.form['sort_attribute'] # Sorting attribute
-		sort_type = request.form['sort_type'] # Sorting type
-		entries = request.form['limit'] # Limit entries value
-		
 		# Connect to the database
 		database = mysql.connect()
 		cursor = database.cursor()
@@ -459,8 +469,7 @@ def query_games():
 		headers = cursor.fetchall()
 
 		# Query database
-		cursor.callproc('query', 
-			('games', attribute, operator, input, sort_attribute, sort_type, entries))
+		cursor.callproc('preview_table', ('games',))
 
 		# Retrieve data from procedure
 		data = cursor.fetchall()
@@ -481,60 +490,84 @@ def query_games():
 			return render_template('games.html', 
 				home = '/home', headers = headers, data = data)
 
-	except Exception as exception:
+	else: # User not logged in
 
-		# Render the games page without data
-		return render_template('games.html', 
-			headers = headers)
+		# Store error message in session cookie
+		session['error'] = 'Unauthorized Access'
+
+		# Redirect to error page
+		return redirect('/error')
+
+# BACKEND: Query Games Method
+@application.route('/database/games', methods = ['POST'])
+def query_games():
+
+	# If there is a username stored in the session coookie
+	if session.get('user'): # User logged in
+
+		try:
+			# Read posted values from user interface
+			attribute = request.form['query_attribute'] # Query attribute
+			operator = request.form['query_operator'] # Query operator
+			input = request.form['query_input'] # Query input	
+			sort_attribute = request.form['sort_attribute'] # Sorting attribute
+			sort_type = request.form['sort_type'] # Sorting type
+			entries = request.form['limit'] # Limit entries value
+			
+			# Connect to the database
+			database = mysql.connect()
+			cursor = database.cursor()
+
+			# Query the database for headers
+			cursor.callproc('get_headers', ('games',))
+
+			# Retrieve data from procedure
+			headers = cursor.fetchall()
+
+			# Query database
+			cursor.callproc('query', 
+				('games', attribute, operator, input, sort_attribute, sort_type, entries))
+
+			# Retrieve data from procedure
+			data = cursor.fetchall()
+
+			# Disconnect from database
+			cursor.close
+			database.close
+
+			if session.get('admin'): # User is administrator
+
+				# Render the games page as admin
+				return render_template('games.html', 
+					home = '/admin', headers = headers, data = data)
+
+			else: # User is not administrator
+
+				# Render the games page as user
+				return render_template('games.html', 
+					home = '/home', headers = headers, data = data)
+
+		except Exception as exception:
+
+			# Render the games page without data
+			return render_template('games.html', 
+				headers = headers)
+
+	else: # User not logged in
+
+		# Store error message in session cookie
+		session['error'] = 'Unauthorized Access'
+
+		# Redirect to error page
+		return redirect('/error')
 
 # HTML: Super Bowls Page
 @application.route('/database/superbowls')
 def render_superbowls():
 
-	# Connect to the database
-	database = mysql.connect()
-	cursor = database.cursor()
+	# If there is a username stored in the session coookie
+	if session.get('user'): # User logged in
 
-	# Query the database for headers
-	cursor.callproc('get_headers', ('superbowls',))
-
-	# Retrieve data from procedure
-	headers = cursor.fetchall()
-
-	# Query database
-	cursor.callproc('preview_table', ('superbowls',))
-
-	# Retrieve data from procedure
-	data = cursor.fetchall()
-
-	# Disconnect from database
-	cursor.close
-	database.close
-
-	if session.get('admin'): # User is administrator
-
-		# Render the super bowls page as admin
-		return render_template('superbowls.html', 
-			home = '/admin', headers = headers, data = data)
-
-	else: # User is not administrator
-
-		# Render the super bowls page as user
-		return render_template('superbowls.html', 
-			home = '/home', headers = headers, data = data)
-
-# BACKEND: Query Super Bowls Method
-@application.route('/database/superbowls', methods = ['POST'])
-def query_superbowls():
-	try:
-		# Read posted values from user interface
-		attribute = request.form['query_attribute'] # Query attribute
-		operator = request.form['query_operator'] # Query operator
-		input = request.form['query_input'] # Query input	
-		sort_attribute = request.form['sort_attribute'] # Sorting attribute
-		sort_type = request.form['sort_type'] # Sorting type
-		entries = request.form['limit'] # Limit entries value
-		
 		# Connect to the database
 		database = mysql.connect()
 		cursor = database.cursor()
@@ -546,8 +579,7 @@ def query_superbowls():
 		headers = cursor.fetchall()
 
 		# Query database
-		cursor.callproc('query', 
-			('superbowls', attribute, operator, input, sort_attribute, sort_type, entries))
+		cursor.callproc('preview_table', ('superbowls',))
 
 		# Retrieve data from procedure
 		data = cursor.fetchall()
@@ -558,70 +590,94 @@ def query_superbowls():
 
 		if session.get('admin'): # User is administrator
 
-			# Render the superbowls page as admin
+			# Render the super bowls page as admin
 			return render_template('superbowls.html', 
 				home = '/admin', headers = headers, data = data)
 
 		else: # User is not administrator
 
-			# Render the superbowls page as user
+			# Render the super bowls page as user
 			return render_template('superbowls.html', 
 				home = '/home', headers = headers, data = data)
 
-	except Exception as exception:
+	else: # User not logged in
 
-		# Render the superbowls page without data
-		return render_template('superbowls.html', 
-			headers = headers)
+		# Store error message in session cookie
+		session['error'] = 'Unauthorized Access'
+
+		# Redirect to error page
+		return redirect('/error')
+
+# BACKEND: Query Super Bowls Method
+@application.route('/database/superbowls', methods = ['POST'])
+def query_superbowls():
+
+	# If there is a username stored in the session coookie
+	if session.get('user'): # User logged in
+
+		try:
+			# Read posted values from user interface
+			attribute = request.form['query_attribute'] # Query attribute
+			operator = request.form['query_operator'] # Query operator
+			input = request.form['query_input'] # Query input	
+			sort_attribute = request.form['sort_attribute'] # Sorting attribute
+			sort_type = request.form['sort_type'] # Sorting type
+			entries = request.form['limit'] # Limit entries value
+			
+			# Connect to the database
+			database = mysql.connect()
+			cursor = database.cursor()
+
+			# Query the database for headers
+			cursor.callproc('get_headers', ('superbowls',))
+
+			# Retrieve data from procedure
+			headers = cursor.fetchall()
+
+			# Query database
+			cursor.callproc('query', 
+				('superbowls', attribute, operator, input, sort_attribute, sort_type, entries))
+
+			# Retrieve data from procedure
+			data = cursor.fetchall()
+
+			# Disconnect from database
+			cursor.close
+			database.close
+
+			if session.get('admin'): # User is administrator
+
+				# Render the superbowls page as admin
+				return render_template('superbowls.html', 
+					home = '/admin', headers = headers, data = data)
+
+			else: # User is not administrator
+
+				# Render the superbowls page as user
+				return render_template('superbowls.html', 
+					home = '/home', headers = headers, data = data)
+
+		except Exception as exception:
+
+			# Render the superbowls page without data
+			return render_template('superbowls.html', 
+				headers = headers)
+
+	else: # User not logged in
+
+		# Store error message in session cookie
+		session['error'] = 'Unauthorized Access'
+
+		# Redirect to error page
+		return redirect('/error')
 
 # HTML: Franchises Page
 @application.route('/database/franchises')
 def render_franchises():
 
-	# Connect to the database
-	database = mysql.connect()
-	cursor = database.cursor()
+	# If there is a username stored in the session coookie
+	if session.get('user'): # User logged in
 
-	# Query the database for headers
-	cursor.callproc('get_headers', ('franchises',))
-
-	# Retrieve data from procedure
-	headers = cursor.fetchall()
-
-	# Query database
-	cursor.callproc('preview_table', ('franchises',))
-
-	# Retrieve data from procedure
-	data = cursor.fetchall()
-
-	# Disconnect from database
-	cursor.close
-	database.close
-
-	if session.get('admin'): # User is administrator
-
-		# Render the franchises page as admin
-		return render_template('franchises.html', 
-			home = '/admin', headers = headers, data = data)
-
-	else: # User is not administrator
-
-		# Render the franchises page as user
-		return render_template('franchises.html', 
-			home = '/home', headers = headers, data = data)
-
-# BACKEND: Query Franchises Method
-@application.route('/database/franchises', methods = ['POST'])
-def query_franchises():
-	try:
-		# Read posted values from user interface
-		attribute = request.form['query_attribute'] # Query attribute
-		operator = request.form['query_operator'] # Query operator
-		input = request.form['query_input'] # Query input	
-		sort_attribute = request.form['sort_attribute'] # Sorting attribute
-		sort_type = request.form['sort_type'] # Sorting type
-		entries = request.form['limit'] # Limit entries value
-		
 		# Connect to the database
 		database = mysql.connect()
 		cursor = database.cursor()
@@ -633,8 +689,7 @@ def query_franchises():
 		headers = cursor.fetchall()
 
 		# Query database
-		cursor.callproc('query', 
-			('franchises', attribute, operator, input, sort_attribute, sort_type, entries))
+		cursor.callproc('preview_table', ('franchises',))
 
 		# Retrieve data from procedure
 		data = cursor.fetchall()
@@ -655,60 +710,84 @@ def query_franchises():
 			return render_template('franchises.html', 
 				home = '/home', headers = headers, data = data)
 
-	except Exception as exception:
+	else: # User not logged in
 
-		# Render the franchises page without data
-		return render_template('franchises.html', 
-			headers = headers)
+		# Store error message in session cookie
+		session['error'] = 'Unauthorized Access'
+
+		# Redirect to error page
+		return redirect('/error')
+
+# BACKEND: Query Franchises Method
+@application.route('/database/franchises', methods = ['POST'])
+def query_franchises():
+
+	# If there is a username stored in the session coookie
+	if session.get('user'): # User logged in
+
+		try:
+			# Read posted values from user interface
+			attribute = request.form['query_attribute'] # Query attribute
+			operator = request.form['query_operator'] # Query operator
+			input = request.form['query_input'] # Query input	
+			sort_attribute = request.form['sort_attribute'] # Sorting attribute
+			sort_type = request.form['sort_type'] # Sorting type
+			entries = request.form['limit'] # Limit entries value
+			
+			# Connect to the database
+			database = mysql.connect()
+			cursor = database.cursor()
+
+			# Query the database for headers
+			cursor.callproc('get_headers', ('franchises',))
+
+			# Retrieve data from procedure
+			headers = cursor.fetchall()
+
+			# Query database
+			cursor.callproc('query', 
+				('franchises', attribute, operator, input, sort_attribute, sort_type, entries))
+
+			# Retrieve data from procedure
+			data = cursor.fetchall()
+
+			# Disconnect from database
+			cursor.close
+			database.close
+
+			if session.get('admin'): # User is administrator
+
+				# Render the franchises page as admin
+				return render_template('franchises.html', 
+					home = '/admin', headers = headers, data = data)
+
+			else: # User is not administrator
+
+				# Render the franchises page as user
+				return render_template('franchises.html', 
+					home = '/home', headers = headers, data = data)
+
+		except Exception as exception:
+
+			# Render the franchises page without data
+			return render_template('franchises.html', 
+				headers = headers)
+
+	else: # User not logged in
+
+		# Store error message in session cookie
+		session['error'] = 'Unauthorized Access'
+
+		# Redirect to error page
+		return redirect('/error')
 
 # HTML: Teams Page
 @application.route('/database/teams')
 def render_teams():
 
-	# Connect to the database
-	database = mysql.connect()
-	cursor = database.cursor()
+	# If there is a username stored in the session coookie
+	if session.get('user'): # User logged in
 
-	# Query the database for headers
-	cursor.callproc('get_headers', ('teams',))
-
-	# Retrieve data from procedure
-	headers = cursor.fetchall()
-
-	# Query database
-	cursor.callproc('preview_table', ('teams',))
-
-	# Retrieve data from procedure
-	data = cursor.fetchall()
-
-	# Disconnect from database
-	cursor.close
-	database.close
-
-	if session.get('admin'): # User is administrator
-
-		# Render the teams page as admin
-		return render_template('teams.html', 
-			home = '/admin', headers = headers, data = data)
-
-	else: # User is not administrator
-
-		# Render the teams page as user
-		return render_template('teams.html', 
-			home = '/home', headers = headers, data = data)
-
-# BACKEND: Query Teams Method
-@application.route('/database/teams', methods = ['POST'])
-def query_teams():
-	try:
-		# Read posted values from user interface
-		attribute = request.form['query_attribute'] # Query attribute
-		operator = request.form['query_operator'] # Query operator
-		input = request.form['query_input'] # Query input	
-		sort_attribute = request.form['sort_attribute'] # Sorting attribute
-		sort_type = request.form['sort_type'] # Sorting type
-		entries = request.form['limit'] # Limit entries value
-		
 		# Connect to the database
 		database = mysql.connect()
 		cursor = database.cursor()
@@ -720,8 +799,7 @@ def query_teams():
 		headers = cursor.fetchall()
 
 		# Query database
-		cursor.callproc('query', 
-			('teams', attribute, operator, input, sort_attribute, sort_type, entries))
+		cursor.callproc('preview_table', ('teams',))
 
 		# Retrieve data from procedure
 		data = cursor.fetchall()
@@ -742,11 +820,76 @@ def query_teams():
 			return render_template('teams.html', 
 				home = '/home', headers = headers, data = data)
 
-	except Exception as exception:
+	else: # User not logged in
 
-		# Render the teams page without data
-		return render_template('teams.html', 
-			headers = headers)
+		# Store error message in session cookie
+		session['error'] = 'Unauthorized Access'
+
+		# Redirect to error page
+		return redirect('/error')
+
+# BACKEND: Query Teams Method
+@application.route('/database/teams', methods = ['POST'])
+def query_teams():
+
+	# If there is a username stored in the session coookie
+	if session.get('user'): # User logged in
+
+		try:
+			# Read posted values from user interface
+			attribute = request.form['query_attribute'] # Query attribute
+			operator = request.form['query_operator'] # Query operator
+			input = request.form['query_input'] # Query input	
+			sort_attribute = request.form['sort_attribute'] # Sorting attribute
+			sort_type = request.form['sort_type'] # Sorting type
+			entries = request.form['limit'] # Limit entries value
+			
+			# Connect to the database
+			database = mysql.connect()
+			cursor = database.cursor()
+
+			# Query the database for headers
+			cursor.callproc('get_headers', ('teams',))
+
+			# Retrieve data from procedure
+			headers = cursor.fetchall()
+
+			# Query database
+			cursor.callproc('query', 
+				('teams', attribute, operator, input, sort_attribute, sort_type, entries))
+
+			# Retrieve data from procedure
+			data = cursor.fetchall()
+
+			# Disconnect from database
+			cursor.close
+			database.close
+
+			if session.get('admin'): # User is administrator
+
+				# Render the teams page as admin
+				return render_template('teams.html', 
+					home = '/admin', headers = headers, data = data)
+
+			else: # User is not administrator
+
+				# Render the teams page as user
+				return render_template('teams.html', 
+					home = '/home', headers = headers, data = data)
+
+		except Exception as exception:
+
+			# Render the teams page without data
+			return render_template('teams.html', 
+				headers = headers)
+
+	else: # User not logged in
+
+		# Store error message in session cookie
+		session['error'] = 'Unauthorized Access'
+
+		# Redirect to error page
+		return redirect('/error')
 
 # HTML: Admin Page
 @application.route('/admin')
@@ -770,34 +913,34 @@ def render_admin():
 @application.route('/admin/config')
 def render_config():
 
-	# Connect to the database
-	database = mysql.connect()
-	cursor = database.cursor()
-
-	# Query the database for headers
-	cursor.callproc('get_users')
-
-	# Retrieve data from procedure
-	users = cursor.fetchall()
-
-	# Query database
-	cursor.callproc('get_admins')
-
-	# Retrieve data from procedure
-	admins = cursor.fetchall()
-
-	# Query database
-	cursor.callproc('get_all_usernames')
-
-	# Retrieve data from procedure
-	usernames = cursor.fetchall()
-
-	# Disconnect from database
-	cursor.close
-	database.close
-
 	# If the user's admin status is 'True'
 	if session.get('admin'): # User is admin
+
+		# Connect to the database
+		database = mysql.connect()
+		cursor = database.cursor()
+
+		# Query the database for headers
+		cursor.callproc('get_users')
+
+		# Retrieve data from procedure
+		users = cursor.fetchall()
+
+		# Query database
+		cursor.callproc('get_admins')
+
+		# Retrieve data from procedure
+		admins = cursor.fetchall()
+
+		# Query database
+		cursor.callproc('get_all_usernames')
+
+		# Retrieve data from procedure
+		usernames = cursor.fetchall()
+
+		# Disconnect from database
+		cursor.close
+		database.close
 
 		# Render the admin page
 		return render_template('config.html', 
@@ -814,45 +957,57 @@ def render_config():
 # BACKEND: Query Config Page
 @application.route('/admin/config', methods = ['POST'])
 def query_config():
-	try:
-		# Read posted values from user interface
-		username = request.form['query_username'] # Query username
-		action = request.form['query_action'] # Query action
-		
-		# Connect to the database
-		database = mysql.connect()
-		cursor = database.cursor()
 
-		if action == 'promote':
+	# If the user's admin status is 'True'
+	if session.get('admin'): # User is admin
 
-			# Promote the user
-			cursor.callproc('set_user', (username, 1,))
+		try:
+			# Read posted values from user interface
+			username = request.form['query_username'] # Query username
+			action = request.form['query_action'] # Query action
+			
+			# Connect to the database
+			database = mysql.connect()
+			cursor = database.cursor()
 
-		if action == 'demote':
+			if action == 'promote':
 
-			# Promote the user
-			cursor.callproc('set_user', (username, 0,))
+				# Promote the user
+				cursor.callproc('set_user', (username, 1,))
 
-		if action == 'delete':
+			if action == 'demote':
 
-			# Delete the user
-			cursor.callproc('delete_user', (username,))
+				# Promote the user
+				cursor.callproc('set_user', (username, 0,))
 
-		# Commit changes to database
-		database.commit()
+			if action == 'delete':
 
-		# Disconnect from database
-		cursor.close
-		database.close
+				# Delete the user
+				cursor.callproc('delete_user', (username,))
 
-		# Redirect to config page
-		return redirect('/admin/config')
+			# Commit changes to database
+			database.commit()
 
-	except Exception as exception:
+			# Disconnect from database
+			cursor.close
+			database.close
 
-		# Render the teams page without data
-		return render_template('teams.html', 
-			headers = headers)
+			# Redirect to config page
+			return redirect('/admin/config')
+
+		except Exception as exception:
+
+			# Render the teams page without data
+			return render_template('teams.html', 
+				headers = headers)
+
+	else:
+
+		# Store error message in session cookie
+		session['error'] = 'Unauthorized Access'
+
+		# Redirect to error page
+		return redirect('/error')
 
 if __name__ == "__main__":
 	application.run()
